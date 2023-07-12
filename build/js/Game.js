@@ -1,22 +1,40 @@
 "use strict";
 class Game {
-    constructor() {
+    constructor(level = 0) {
+        this.level = level;
+        this.tileSize = 32;
+        this.dimensions = { x: 24, y: 16 };
+        // object with important data
+        this.gameData = levels;
         this.canvas = document.querySelector('canvas');
-        this.canvas.width = 1024;
-        this.canvas.height = 512;
+        this.canvas.width = this.dimensions.x * this.tileSize;
+        this.canvas.height = this.dimensions.y * this.tileSize;
         this.c = this.canvas.getContext('2d');
-        this.towers = [];
-        this.enemies = [];
-        this.canvas.addEventListener('click', this.drawBackground.bind(this));
+        this.interactive = new ConvertData(this.dimensions, this.tileSize, this.gameData[this.level].interactive);
+        this.towers = document.querySelectorAll('.turret');
+        this.background = new Sprite(this.canvas, this.c, '../assets/Levels/level1/level-1.png');
+        this.towersArr = [];
+        this.enemiesArr = [];
+        this.towers.forEach((tower) => {
+            tower.addEventListener('dragstart', this.startDragging.bind(this));
+        });
     }
-    drawBackground() {
-        let random1 = Math.floor(Math.random() * 255) + 1;
-        let random2 = Math.floor(Math.random() * 255) + 1;
-        let random3 = Math.floor(Math.random() * 255) + 1;
-        this.c.fillStyle = `rgb(${random1},${random2},${random3})`;
-        this.c.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    startDragging() {
+        console.log('pick up tower');
+        this.drawInteractivePlaces();
+    }
+    drawInteractivePlaces() {
+        this.interactive.interactivePositions.forEach((pos) => {
+            this.c.fillStyle = `rgba(200,200,200,0.3)`;
+            this.c.fillRect(pos.x, pos.y, this.tileSize * 3, this.tileSize * 3);
+        });
+        console.log(this.interactive.interactivePositions);
+    }
+    endDragging() {
+        console.log('placing tower');
     }
 }
 const game = new Game();
-game.drawBackground();
-console.log(game);
+game.background.image.onload = () => {
+    game.background.draw();
+};
