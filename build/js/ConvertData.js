@@ -1,8 +1,9 @@
 "use strict";
 class ConvertData {
-    constructor(dimensions, tileSize, data) {
+    constructor(dimensions, tileSize, size = tileSize, data) {
         this.dimensions = dimensions;
         this.tileSize = tileSize;
+        this.size = size;
         this.data = data;
         this.data2D = this.convertData2D(this.data);
         this.interactivePositions = this.findInteractive(this.data2D);
@@ -22,6 +23,7 @@ class ConvertData {
                     arr.push({
                         x: x * this.tileSize,
                         y: y * this.tileSize,
+                        size: this.size,
                     });
                 }
             });
