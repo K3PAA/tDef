@@ -23,10 +23,12 @@ class Game {
   canBuild: Boolean = false
   mousePosition: Point = { x: 0, y: 0 }
   // To implement, will hold tower to push if to build info
-  activeTower: string | null = null
+  activeTower: Tower | null = null
+  // hold image data attribute that have tower name
+  activeTowerName: null | string = null
 
   // Arrays that will contains enemies and towers when on screen
-  towersArr: object[]
+  towersArr: TowerTypes[]
   enemiesArr: object[]
 
   constructor(public level: number = 0) {
@@ -52,8 +54,8 @@ class Game {
     this.towersArr = []
     this.enemiesArr = []
 
-    this.towers.forEach((tower) => {
-      tower.addEventListener('dragstart', this.startDragging.bind(this))
+    this.towers.forEach((tower, i) => {
+      tower.addEventListener('dragstart', this.startDragging.bind(this, tower))
     })
 
     // add debounce to this function
@@ -69,23 +71,81 @@ class Game {
     return false
   }
 
-  startDragging(): void {
+  startDragging(tower: HTMLImageElement): void {
+    const towerName = tower.dataset.name!
+
+    this.activeTowerName = towerName
     this.isDragging = true
   }
 
   dropTurret(): void {
-    if (this.canBuild) {
+    if (this.canBuild && this.activeTower) {
+      this.towersArr.push(this.activeTower)
+
+      // if place is used then remove it from interactive positions
+      this.interactive.interactivePositions =
+        this.interactive.interactivePositions.filter((pos) => {
+          return pos !== this.activeTower?.position
+        })
+
       this.canBuild = false
       this.activeTower = null
+
+      console.log(this.towersArr)
     }
 
     this.isDragging = false
     this.mousePosition = { x: 0, y: 0 }
+    this.activeTowerName = null
   }
 
   updateMousePos(e: DragEvent): void {
     const { x, y } = { x: e.offsetX, y: e.offsetY }
     this.mousePosition = { x, y }
+  }
+  createError(errMsg: string): never {
+    throw new Error(errMsg)
+  }
+
+  selectTower(pos: Square): Tower {
+    switch (this.activeTowerName) {
+      case 'speed':
+        return new SpeedTower(this.canvas, this.c, 100, 20, 50, 100, pos)
+        break
+
+      case 'burn':
+        return new Tower(this.canvas, this.c, 100, 20, 50, 120, pos)
+        break
+
+      case 'freeze':
+        return new Tower(this.canvas, this.c, 100, 20, 50, 300, pos)
+        break
+
+      case 'laser':
+        return new Tower(this.canvas, this.c, 100, 20, 50, 120, pos)
+        break
+
+      case 'thunder':
+        return new Tower(this.canvas, this.c, 100, 20, 50, 140, pos)
+        break
+
+      case 'bubble':
+        return new Tower(this.canvas, this.c, 100, 20, 50, 160, pos)
+        break
+
+      case 'rocket':
+        return new Tower(this.canvas, this.c, 100, 20, 50, 180, pos)
+        break
+
+      case 'metal':
+        return new Tower(this.canvas, this.c, 100, 20, 50, 200, pos)
+        break
+      default:
+        this.createError(
+          `Provided tower name: ${this.activeTowerName} does not match any tower name`
+        )
+        break
+    }
   }
 
   drawIfCanBuild(): void {
@@ -99,7 +159,7 @@ class Game {
         count++
         this.drawInteractivePlace(pos)
       } else if (!this.activeTower) {
-        this.activeTower = `Tower cordinaters x: ${pos.x} y: ${pos.y}`
+        this.activeTower = this.selectTower(pos)
       }
     })
 
@@ -117,11 +177,17 @@ class Game {
     this.c.fillRect(pos.x, pos.y, pos.size, pos.size)
   }
 
+  drawTowers() {
+    this.towersArr.forEach((tower) => {
+      tower.draw()
+    })
+  }
+
   animate(): void {
     requestAnimationFrame(this.animate.bind(this))
     this.background.draw()
-
     this.drawIfCanBuild()
+    this.drawTowers()
   }
 }
 

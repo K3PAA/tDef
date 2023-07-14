@@ -14,6 +14,8 @@ class Game {
         this.mousePosition = { x: 0, y: 0 };
         // To implement, will hold tower to push if to build info
         this.activeTower = null;
+        // hold image data attribute that have tower name
+        this.activeTowerName = null;
         this.canvas = document.querySelector('canvas');
         this.canvas.width = this.dimensions.x * this.tileSize;
         this.canvas.height = this.dimensions.y * this.tileSize;
@@ -23,8 +25,8 @@ class Game {
         this.background = new Sprite(this.canvas, this.c, '../assets/Levels/level1/level-1.png');
         this.towersArr = [];
         this.enemiesArr = [];
-        this.towers.forEach((tower) => {
-            tower.addEventListener('dragstart', this.startDragging.bind(this));
+        this.towers.forEach((tower, i) => {
+            tower.addEventListener('dragstart', this.startDragging.bind(this, tower));
         });
         // add debounce to this function
         this.canvas.addEventListener('dragover', this.updateMousePos.bind(this));
@@ -36,20 +38,65 @@ class Game {
         }
         return false;
     }
-    startDragging() {
+    startDragging(tower) {
+        const towerName = tower.dataset.name;
+        this.activeTowerName = towerName;
         this.isDragging = true;
     }
     dropTurret() {
-        if (this.canBuild) {
+        if (this.canBuild && this.activeTower) {
+            this.towersArr.push(this.activeTower);
+            // if place is used then remove it from interactive positions
+            this.interactive.interactivePositions =
+                this.interactive.interactivePositions.filter((pos) => {
+                    var _a;
+                    return pos !== ((_a = this.activeTower) === null || _a === void 0 ? void 0 : _a.position);
+                });
             this.canBuild = false;
             this.activeTower = null;
+            console.log(this.towersArr);
         }
         this.isDragging = false;
         this.mousePosition = { x: 0, y: 0 };
+        this.activeTowerName = null;
     }
     updateMousePos(e) {
         const { x, y } = { x: e.offsetX, y: e.offsetY };
         this.mousePosition = { x, y };
+    }
+    createError(errMsg) {
+        throw new Error(errMsg);
+    }
+    selectTower(pos) {
+        switch (this.activeTowerName) {
+            case 'speed':
+                return new SpeedTower(this.canvas, this.c, 100, 20, 50, 100, pos);
+                break;
+            case 'burn':
+                return new Tower(this.canvas, this.c, 100, 20, 50, 120, pos);
+                break;
+            case 'freeze':
+                return new Tower(this.canvas, this.c, 100, 20, 50, 300, pos);
+                break;
+            case 'laser':
+                return new Tower(this.canvas, this.c, 100, 20, 50, 120, pos);
+                break;
+            case 'thunder':
+                return new Tower(this.canvas, this.c, 100, 20, 50, 140, pos);
+                break;
+            case 'bubble':
+                return new Tower(this.canvas, this.c, 100, 20, 50, 160, pos);
+                break;
+            case 'rocket':
+                return new Tower(this.canvas, this.c, 100, 20, 50, 180, pos);
+                break;
+            case 'metal':
+                return new Tower(this.canvas, this.c, 100, 20, 50, 200, pos);
+                break;
+            default:
+                this.createError(`Provided tower name: ${this.activeTowerName} does not match any tower name`);
+                break;
+        }
     }
     drawIfCanBuild() {
         if (!this.isDragging)
@@ -63,7 +110,7 @@ class Game {
                 this.drawInteractivePlace(pos);
             }
             else if (!this.activeTower) {
-                this.activeTower = `Tower cordinaters x: ${pos.x} y: ${pos.y}`;
+                this.activeTower = this.selectTower(pos);
             }
         });
         // If all building spots aren't taken then enable building a tower
@@ -80,10 +127,16 @@ class Game {
         this.c.fillStyle = `rgba(200,200,200,0.3)`;
         this.c.fillRect(pos.x, pos.y, pos.size, pos.size);
     }
+    drawTowers() {
+        this.towersArr.forEach((tower) => {
+            tower.draw();
+        });
+    }
     animate() {
         requestAnimationFrame(this.animate.bind(this));
         this.background.draw();
         this.drawIfCanBuild();
+        this.drawTowers();
     }
 }
 const game = new Game();

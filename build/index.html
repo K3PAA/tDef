@@ -4,72 +4,224 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>Document</title>
   </head>
   <body style="background-color: rgb(64, 64, 64)">
-    <div class="turrets-container">
-      <img
-        src="../assets/Turret/speedShooter.png"
-        alt="turret"
-        class="turret"
-      />
-      <img
-        src="../assets/Turret/turret2.png"
-        alt="turret"
-        class="turret"
-        draggable="true"
-      />
-      <img
-        src="../assets/Turret/turret3.png"
-        alt="turret"
-        class="turret"
-        draggable="true"
-      />
-      <img
-        src="../assets/Turret/turret4.png"
-        alt="turret"
-        class="turret"
-        draggable="true"
-      />
-      <img
-        src="../assets/Turret/turret5.png"
-        alt="turret"
-        class="turret"
-        draggable="true"
-      />
-      <img
-        src="../assets/Turret/turret6.png"
-        alt="turret"
-        class="turret"
-        draggable="true"
-      />
-      <img
-        src="../assets/Turret/turret7.png"
-        alt="turret"
-        class="turret"
-        draggable="true"
-      />
-      <img
-        src="../assets/Turret/turret8.png"
-        alt="turret"
-        class="turret"
-        draggable="true"
-      />
-    </div>
+    <main class="game">
+      <canvas></canvas>
 
-    <canvas></canvas>
+      <div class="game--info-holder">
+        <section class="general-info">
+          <h3>Health <span>20</span></h3>
+          <h3>Money <span>100</span>$</h3>
+          <h3>wave <span>0</span> / <span>20</span></h3>
+        </section>
 
-    <div class="gameInfo">
-      <p>health <span>20</span></p>
-      <p>money <span>50</span></p>
+        <section class="turrets-display">
+          <h1 class="turrets-display--title">Turrets</h1>
+          <div class="turrets-container">
+            <div class="turret-info-holder">
+              <img
+                src="../assets/Turret/turret1.png"
+                alt="turret"
+                class="turret"
+                data-name="speed"
+              />
+              <div class="turret-info">
+                <h1>70$</h1>
+                <span>speed</span>
+              </div>
+            </div>
+            <div class="turret-info-holder">
+              <img
+                src="../assets/Turret/turret2.png"
+                alt="turret"
+                class="turret"
+                draggable="true"
+                data-name="burn"
+              />
+              <div class="turret-info">
+                <h1>40$</h1>
+                <span>burn</span>
+              </div>
+            </div>
 
-      <p><span>0</span> / <span>10</span></p>
-      <button>start next level</button>
-    </div>
+            <div class="turret-info-holder">
+              <img
+                src="../assets/Turret/turret3.png"
+                alt="turret"
+                class="turret"
+                draggable="true"
+                data-name="freeze"
+              />
+              <div class="turret-info">
+                <h1>55$</h1>
+                <span>freeze</span>
+              </div>
+            </div>
+
+            <div class="turret-info-holder">
+              <img
+                src="../assets/Turret/turret4.png"
+                alt="turret"
+                class="turret"
+                draggable="true"
+                data-name="laser"
+              />
+              <div class="turret-info">
+                <h1>115$</h1>
+                <span>laser</span>
+              </div>
+            </div>
+
+            <div class="turret-info-holder">
+              <img
+                src="../assets/Turret/turret5.png"
+                alt="turret"
+                class="turret"
+                draggable="true"
+                data-name="thunder"
+              />
+              <div class="turret-info">
+                <h1>70$</h1>
+                <span>thunder</span>
+              </div>
+            </div>
+
+            <div class="turret-info-holder">
+              <img
+                src="../assets/Turret/turret6.png"
+                alt="turret"
+                class="turret"
+                draggable="true"
+                data-name="bubble"
+              />
+              <div class="turret-info">
+                <h1>60$</h1>
+                <span>bubble</span>
+              </div>
+            </div>
+
+            <div class="turret-info-holder">
+              <img
+                src="../assets/Turret/turret7.png"
+                alt="turret"
+                class="turret"
+                draggable="true"
+                data-name="rocket"
+              />
+              <div class="turret-info">
+                <h1>120$</h1>
+                <span>rocket</span>
+              </div>
+            </div>
+
+            <div class="turret-info-holder">
+              <img
+                src="../assets/Turret/turret8.png"
+                alt="turret"
+                class="turret"
+                draggable="true"
+                data-name="metal"
+              />
+              <div class="turret-info">
+                <h1>20$</h1>
+                <span>metal</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="turret--active active">
+          <div class="turret--general-info">
+            <div class="turet--image-section">
+              <img src="../assets/Turret/turret1.png" alt="" />
+
+              <div class="turret--name-container">
+                <h1 class="turret-title">speed shooter</h1>
+                <button class="sell-turret">Sell for 100$</button>
+              </div>
+            </div>
+
+            <div class="turret-stats">
+              <h2>DMG:<span>100 +0</span></h2>
+              <h2>AS:<span>20 +0</span></h2>
+              <h2>RANGE:<span>200 +0</span></h2>
+            </div>
+          </div>
+
+          <div class="turret-columns-container">
+            <div class="turret-column">
+              <h2>dmg</h2>
+              <ul class="turret--upgrade-list">
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+              </ul>
+            </div>
+            <div class="turret-column">
+              <h2>as</h2>
+              <ul class="turret--upgrade-list">
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+              </ul>
+            </div>
+            <div class="turret-column">
+              <h2>range</h2>
+              <ul class="turret--upgrade-list">
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+                <li class="turret--upgrade-section">
+                  <button>100 $</button> <span>+10</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <button class="turret--active-close">close</button>
+        </section>
+
+        <section class="game-buttons">
+          <div class="secondary-buttons">
+            <button>Speed x2</button>
+            <button>Auto Start</button>
+          </div>
+
+          <button class="start-wave">Start Next Wave</button>
+        </section>
+      </div>
+    </main>
 
     <script src="./js/levelsData.js"></script>
     <script src="./js/ConvertData.js"></script>
     <script src="./js/Sprite.js"></script>
+    <script src="./js/Tower.js"></script>
     <script src="./js/Game.js"></script>
   </body>
 </html>

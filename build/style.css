@@ -1,0 +1,272 @@
+@font-face {
+  font-family: 'DungeonFont';
+  src: url('../assets/Fonts/DungeonFont.ttf');
+}
+
+@font-face {
+  font-family: 'Monogram';
+  src: url('../assets/Fonts/monogram.ttf');
+}
+
+:root {
+  --clr-primary: rgb(0, 0, 0);
+}
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+* {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Set core root defaults */
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* Set core body defaults */
+body {
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img,
+picture,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+/* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.game {
+  display: flex;
+  font-family: 'Monogram', Arial, sans-serif;
+}
+
+/* Right Info Bar Start*/
+
+/* Info */
+
+.game--info-holder {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: blanchedalmond;
+  padding: 5px;
+}
+.general-info {
+  display: flex;
+  justify-content: center;
+
+  gap: 1rem;
+}
+.general-info h3 {
+  font-size: 1.5rem;
+}
+
+.game-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.secondary-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+.game-buttons button {
+  border: 2px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.game-buttons .secondary-buttons button {
+  background-color: rgb(255, 168, 168);
+}
+
+.game-buttons .start-wave {
+  background-color: rgb(163, 255, 92);
+}
+.secondary-buttons button {
+  flex: 1;
+}
+/* Turret info */
+.turrets-display {
+  margin-top: -80px;
+  display: none;
+}
+
+.turrets-display.active {
+  display: block;
+}
+.turrets-display--title {
+  font-size: 2rem;
+  text-align: center;
+}
+.turrets-container {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+}
+.turret-info-holder {
+  border: 2px solid black;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-evenly;
+}
+.turret-info {
+  display: flex;
+  flex-direction: column;
+}
+.turret-info h1 {
+  font-size: 1.25rem;
+  color: rgb(58, 124, 65);
+}
+.turret-info span {
+  font-size: 1.25rem;
+  color: goldenrod;
+}
+
+/* Turrets active */
+
+.turret--active {
+  padding: 5px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.turret--active.active {
+  display: flex;
+}
+.turret--general-info {
+  border-radius: 5px;
+  background-color: grey;
+  border: 2px solid black;
+}
+.turet--image-section {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.turret--name-container {
+  display: flex;
+  flex-direction: column;
+}
+.turret-title {
+  font-size: 1.5rem;
+}
+.sell-turret {
+  background: rgb(245, 89, 89);
+  border: 0;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0 5px;
+  border-radius: 5px;
+}
+.turret-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.turret-stats h2 {
+  text-align: center;
+  font-size: 22px;
+}
+
+.turret-columns-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.turret-column {
+  border: 2px solid black;
+  background-color: grey;
+  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.turret-column h2 {
+  font-size: 1.5rem;
+}
+
+.turret--upgrade-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.turret--upgrade-section {
+  display: flex;
+  padding: 0;
+  align-items: center;
+  gap: 5px;
+}
+
+.turret--upgrade-section button {
+  color: var(--clr-primary);
+  cursor: pointer;
+  background-color: rgb(58, 124, 65);
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 5px;
+}
+
+.turret--upgrade-section span {
+  font-size: 1.5rem;
+  color: var(--clr-primary);
+}
+
+.turret--active-close {
+  background-color: grey;
+  color: black;
+  border: 2px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+/* Right Info Bar End*/
