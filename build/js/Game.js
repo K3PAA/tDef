@@ -21,16 +21,37 @@ class Game {
         this.canvas.height = this.dimensions.y * this.tileSize;
         this.c = this.canvas.getContext('2d');
         this.interactive = new ConvertData(this.dimensions, this.tileSize, this.tileSize * 3, this.gameData[this.level].interactive);
-        this.towers = document.querySelectorAll('.turret-conatiner__image');
+        // HTML ELEMENTS
+        this.towers = document.querySelectorAll('.turret');
+        this.generalImage = document.querySelector('.general__image');
+        this.delTowerBtn = document.querySelector('.sellBtn');
+        this.towerNameHTML = document.querySelector('.general__name');
+        this.turretInfo = document.querySelector('.turret-open');
+        this.turretsDisplay = document.querySelector('.turrets-display');
+        this.closeTurretInfoBtn = document.getElementById('close-turret');
         this.background = new Sprite(this.canvas, this.c, '../assets/Levels/level1/level-1.png');
         this.towersArr = [];
         this.enemiesArr = [];
         this.towers.forEach((tower, i) => {
             tower.addEventListener('dragstart', this.startDragging.bind(this, tower));
         });
-        // add debounce to this function
+        this.closeTurretInfoBtn.addEventListener('click', this.closeTurretInfo.bind(this));
+        this.canvas.addEventListener('click', this.checkPosition.bind(this));
         this.canvas.addEventListener('dragover', this.updateMousePos.bind(this));
         this.canvas.addEventListener('dragleave', this.dropTurret.bind(this));
+    }
+    closeTurretInfo() {
+        this.turretInfo.classList.remove('active');
+        this.turretsDisplay.classList.add('active');
+        this.towersNotInFocus();
+    }
+    showTurretInfo() {
+        this.turretInfo.classList.add('active');
+        this.turretsDisplay.classList.remove('active');
+    }
+    checkPosition(e) {
+        // check if not clicked on building, if no then :
+        this.closeTurretInfo();
     }
     isPointInSquare(a, b) {
         if (a.x < b.x + b.size && a.x > b.x && a.y < b.y + b.size && a.y > b.y) {
@@ -43,8 +64,15 @@ class Game {
         this.activeTowerName = towerName;
         this.isDragging = true;
     }
+    towersNotInFocus() {
+        this.towersArr.forEach((tower) => {
+            if (tower.active)
+                tower.active = false;
+        });
+    }
     dropTurret() {
         if (this.canBuild && this.activeTower) {
+            this.towersNotInFocus();
             this.towersArr.push(this.activeTower);
             // if place is used then remove it from interactive positions
             this.interactive.interactivePositions =
@@ -52,6 +80,7 @@ class Game {
                     var _a;
                     return pos !== ((_a = this.activeTower) === null || _a === void 0 ? void 0 : _a.position);
                 });
+            this.showActiveTowerHTML(this.activeTower);
             this.canBuild = false;
             this.activeTower = null;
             console.log(this.towersArr);
@@ -70,28 +99,28 @@ class Game {
     selectTower(pos) {
         switch (this.activeTowerName) {
             case 'speed':
-                return new SpeedTower(this.canvas, this.c, 100, 20, 50, 100, pos);
+                return new SpeedTower(this.canvas, this.c, 100, 20, 50, 100, pos, '../assets/Turret/turret1.png');
                 break;
             case 'burn':
-                return new Tower(this.canvas, this.c, 100, 20, 50, 120, pos);
+                return new Tower(this.canvas, this.c, 100, 20, 50, 120, pos, '../assets/Turret/turret2.png');
                 break;
             case 'freeze':
-                return new Tower(this.canvas, this.c, 100, 20, 50, 300, pos);
+                return new Tower(this.canvas, this.c, 100, 20, 50, 300, pos, '../assets/Turret/turret3.png');
                 break;
             case 'laser':
-                return new Tower(this.canvas, this.c, 100, 20, 50, 120, pos);
+                return new Tower(this.canvas, this.c, 100, 20, 50, 120, pos, '../assets/Turret/turret4.png');
                 break;
             case 'thunder':
-                return new Tower(this.canvas, this.c, 100, 20, 50, 140, pos);
+                return new Tower(this.canvas, this.c, 100, 20, 50, 140, pos, '../assets/Turret/turret5.png');
                 break;
             case 'bubble':
-                return new Tower(this.canvas, this.c, 100, 20, 50, 160, pos);
+                return new Tower(this.canvas, this.c, 100, 20, 50, 160, pos, '../assets/Turret/turret6.png');
                 break;
             case 'rocket':
-                return new Tower(this.canvas, this.c, 100, 20, 50, 180, pos);
+                return new Tower(this.canvas, this.c, 100, 20, 50, 180, pos, '../assets/Turret/turret7.png');
                 break;
             case 'metal':
-                return new Tower(this.canvas, this.c, 100, 20, 50, 200, pos);
+                return new Tower(this.canvas, this.c, 100, 20, 50, 200, pos, '../assets/Turret/turret8.png');
                 break;
             default:
                 this.createError(`Provided tower name: ${this.activeTowerName} does not match any tower name`);
@@ -131,6 +160,13 @@ class Game {
         this.towersArr.forEach((tower) => {
             tower.draw();
         });
+    }
+    showActiveTowerHTML(tower) {
+        this.turretsDisplay.classList.remove('active');
+        // To change later
+        this.generalImage.src = '../assets/Turret/turret1.png';
+        this.towerNameHTML.innerText = 'Scooby Doo';
+        this.turretInfo.classList.add('active');
     }
     animate() {
         requestAnimationFrame(this.animate.bind(this));
