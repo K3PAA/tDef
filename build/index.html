@@ -11,29 +11,36 @@
     <main class="game">
       <canvas></canvas>
 
-      <div class="game--info-holder">
-        <section class="general-info">
-          <h3>Health <span>20</span></h3>
-          <h3>Money <span>100</span>$</h3>
-          <h3>wave <span>0</span> / <span>20</span></h3>
+      <div class="game-info flex">
+        <section class="general-info flex">
+          <h3 class="general-info__info">
+            Health <span id="game-heart">20</span>
+          </h3>
+          <h3 class="general-info__info">
+            Money <span id="game-money">100</span>$
+          </h3>
+          <h3 class="general-info__info">
+            wave <span id="game-wave-current">0</span> /
+            <span id="game-wave-all">20</span>
+          </h3>
         </section>
 
         <section class="turrets-display">
-          <h1 class="turrets-display--title">Turrets</h1>
-          <div class="turrets-container">
-            <div class="turret-info-holder">
+          <h1 class="turrets-display__title">Turrets</h1>
+          <div class="turrets-display__container grid">
+            <div class="turret-conatiner flex radius-5">
               <img
                 src="../assets/Turret/turret1.png"
                 alt="turret"
                 class="turret"
                 data-name="speed"
               />
-              <div class="turret-info">
-                <h1>70$</h1>
-                <span>speed</span>
+              <div class="turret-container__info flex" style="--_gap: 0">
+                <h1 class="turret__price">70$</h1>
+                <h2 class="turret__name">speed</h2>
               </div>
             </div>
-            <div class="turret-info-holder">
+            <div class="turret-conatiner flex radius-5">
               <img
                 src="../assets/Turret/turret2.png"
                 alt="turret"
@@ -41,13 +48,13 @@
                 draggable="true"
                 data-name="burn"
               />
-              <div class="turret-info">
-                <h1>40$</h1>
-                <span>burn</span>
+              <div class="turret-container__info flex" style="--_gap: 0">
+                <h1 class="turret__price">40$</h1>
+                <h2 class="turret__name">burn</h2>
               </div>
             </div>
 
-            <div class="turret-info-holder">
+            <div class="turret-conatiner flex radius-5">
               <img
                 src="../assets/Turret/turret3.png"
                 alt="turret"
@@ -55,13 +62,13 @@
                 draggable="true"
                 data-name="freeze"
               />
-              <div class="turret-info">
-                <h1>55$</h1>
-                <span>freeze</span>
+              <div class="turret-container__info flex" style="--_gap: 0">
+                <h1 class="turret__price">55$</h1>
+                <h2 class="turret__name">freeze</h2>
               </div>
             </div>
 
-            <div class="turret-info-holder">
+            <div class="turret-conatiner flex radius-5">
               <img
                 src="../assets/Turret/turret4.png"
                 alt="turret"
@@ -69,13 +76,13 @@
                 draggable="true"
                 data-name="laser"
               />
-              <div class="turret-info">
-                <h1>115$</h1>
-                <span>laser</span>
+              <div class="turret-container__info flex" style="--_gap: 0">
+                <h1 class="turret__price">115$</h1>
+                <h2 class="turret__name">laser</h2>
               </div>
             </div>
 
-            <div class="turret-info-holder">
+            <div class="turret-conatiner flex radius-5">
               <img
                 src="../assets/Turret/turret5.png"
                 alt="turret"
@@ -83,13 +90,13 @@
                 draggable="true"
                 data-name="thunder"
               />
-              <div class="turret-info">
-                <h1>70$</h1>
-                <span>thunder</span>
+              <div class="turret-container__info flex" style="--_gap: 0">
+                <h1 class="turret__price">70$</h1>
+                <h2 class="turret__name">thunder</h2>
               </div>
             </div>
 
-            <div class="turret-info-holder">
+            <div class="turret-conatiner flex radius-5">
               <img
                 src="../assets/Turret/turret6.png"
                 alt="turret"
@@ -97,13 +104,13 @@
                 draggable="true"
                 data-name="bubble"
               />
-              <div class="turret-info">
-                <h1>60$</h1>
-                <span>bubble</span>
+              <div class="turret-container__info flex" style="--_gap: 0">
+                <h1 class="turret__price">60$</h1>
+                <h2 class="turret__name">bubble</h2>
               </div>
             </div>
 
-            <div class="turret-info-holder">
+            <div class="turret-conatiner flex radius-5">
               <img
                 src="../assets/Turret/turret7.png"
                 alt="turret"
@@ -111,13 +118,13 @@
                 draggable="true"
                 data-name="rocket"
               />
-              <div class="turret-info">
-                <h1>120$</h1>
-                <span>rocket</span>
+              <div class="turret-container__info flex" style="--_gap: 0">
+                <h1 class="turret__price">120$</h1>
+                <h2 class="turret__name">rocket</h2>
               </div>
             </div>
 
-            <div class="turret-info-holder">
+            <div class="turret-conatiner flex radius-5">
               <img
                 src="../assets/Turret/turret8.png"
                 alt="turret"
@@ -125,95 +132,156 @@
                 draggable="true"
                 data-name="metal"
               />
-              <div class="turret-info">
-                <h1>20$</h1>
-                <span>metal</span>
+              <div class="turret-container__info flex" style="--_gap: 0">
+                <h1 class="turret__price">20$</h1>
+                <h2 class="turret__name">metal</h2>
               </div>
             </div>
           </div>
         </section>
-        <section class="turret--active active">
-          <div class="turret--general-info">
-            <div class="turet--image-section">
-              <img src="../assets/Turret/turret1.png" alt="" />
 
-              <div class="turret--name-container">
-                <h1 class="turret-title">speed shooter</h1>
-                <button class="sell-turret">Sell for 100$</button>
+        <section class="turret-open active">
+          <div class="turret-open__general radius-5">
+            <div class="general__section flex">
+              <img
+                src="../assets/Turret/turret1.png"
+                alt="tower"
+                class="general__image"
+              />
+
+              <div class="general__name-container flex">
+                <h1 class="general__name">speed shooter</h1>
+                <button class="button general__button">Sell for 100$</button>
               </div>
             </div>
 
-            <div class="turret-stats">
-              <h2>DMG:<span>100 +0</span></h2>
-              <h2>AS:<span>20 +0</span></h2>
-              <h2>RANGE:<span>200 +0</span></h2>
+            <div class="general__stats grid">
+              <h2 class="general__stats-stats">DMG:<span>100 +0</span></h2>
+              <h2 class="general__stats-stats">AS:<span>20 +0</span></h2>
+              <h2 class="general__stats-stats">RANGE:<span>200 +0</span></h2>
             </div>
           </div>
 
-          <div class="turret-columns-container">
-            <div class="turret-column">
-              <h2>dmg</h2>
-              <ul class="turret--upgrade-list">
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
+          <div class="turret-open__column-section grid">
+            <div class="turret-open__column | flex radius-5">
+              <h2 class="turret-open__column-title">dmg</h2>
+              <ul class="upgrade-list | flex" style="--_gap: 0.25rem">
+                <li class="upgrade-list__li">
+                  <button
+                    class="upgrade-list__button bought | button radius-5"
+                    disabled
+                  >
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
                 </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
                 </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
                 </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
-                </li>
-              </ul>
-            </div>
-            <div class="turret-column">
-              <h2>as</h2>
-              <ul class="turret--upgrade-list">
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
-                </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
-                </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
-                </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
                 </li>
               </ul>
             </div>
-            <div class="turret-column">
-              <h2>range</h2>
-              <ul class="turret--upgrade-list">
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
+            <div class="turret-open__column | flex radius-5">
+              <h2 class="turret-open__column-title">as</h2>
+              <ul class="upgrade-list | flex" style="--_gap: 0.25rem">
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
                 </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
                 </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
                 </li>
-                <li class="turret--upgrade-section">
-                  <button>100 $</button> <span>+10</span>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
+                </li>
+              </ul>
+            </div>
+            <div class="turret-open__column | flex radius-5">
+              <h2 class="turret-open__column-title">range</h2>
+              <ul class="upgrade-list | flex" style="--_gap: 0.25rem">
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
+                </li>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
+                </li>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
+                </li>
+                <li class="upgrade-list__li">
+                  <button class="upgrade-list__button | button radius-5">
+                    100 $
+                  </button>
+                  <span class="upgrade-list__info">+10</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          <button class="turret--active-close">close</button>
+          <button
+            class="turret--active-close button radius-5"
+            id="close-turret"
+          >
+            close
+          </button>
         </section>
 
-        <section class="game-buttons">
-          <div class="secondary-buttons">
-            <button>Speed x2</button>
-            <button>Auto Start</button>
+        <section class="game-buttons flex" style="--_gap: 4px">
+          <div class="game-buttons__secondary-container | flex">
+            <button
+              class="button game-button__secondary radius-5 active"
+              id="speed"
+            >
+              Speed x2
+            </button>
+            <button
+              class="button game-button__secondary radius-5 active"
+              id="auto-start"
+            >
+              Auto Start
+            </button>
           </div>
 
-          <button class="start-wave">Start Next Wave</button>
+          <button class="button radius-5 game-button__primary">
+            Start Next Wave
+          </button>
         </section>
       </div>
     </main>
@@ -223,5 +291,6 @@
     <script src="./js/Sprite.js"></script>
     <script src="./js/Tower.js"></script>
     <script src="./js/Game.js"></script>
+    <script src="./js/main.js"></script>
   </body>
 </html>

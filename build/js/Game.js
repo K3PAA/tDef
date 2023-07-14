@@ -21,7 +21,7 @@ class Game {
         this.canvas.height = this.dimensions.y * this.tileSize;
         this.c = this.canvas.getContext('2d');
         this.interactive = new ConvertData(this.dimensions, this.tileSize, this.tileSize * 3, this.gameData[this.level].interactive);
-        this.towers = document.querySelectorAll('.turret');
+        this.towers = document.querySelectorAll('.turret-conatiner__image');
         this.background = new Sprite(this.canvas, this.c, '../assets/Levels/level1/level-1.png');
         this.towersArr = [];
         this.enemiesArr = [];
@@ -139,7 +139,3 @@ class Game {
         this.drawTowers();
     }
 }
-const game = new Game();
-game.background.image.onload = () => {
-    game.animate();
-};

@@ -44,7 +44,7 @@ class Game {
       this.gameData[this.level].interactive
     )
 
-    this.towers = document.querySelectorAll('.turret')!
+    this.towers = document.querySelectorAll('.turret-conatiner__image')!
     this.background = new Sprite(
       this.canvas,
       this.c,
@@ -189,9 +189,4 @@ class Game {
     this.drawIfCanBuild()
     this.drawTowers()
   }
-}
-
-const game = new Game()
-game.background.image.onload = () => {
-  game.animate()
 }

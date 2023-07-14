@@ -9,7 +9,11 @@
 }
 
 :root {
-  --clr-primary: rgb(0, 0, 0);
+  --clr-primary: blanchedalmond;
+  --clr-dark: rgb(0, 0, 0);
+
+  --clr-active: rgb(163, 255, 92);
+  --clr-disable: rgb(255, 168, 168);
 }
 
 /* Box sizing rules */
@@ -82,190 +86,205 @@ svg {
   font-family: 'Monogram', Arial, sans-serif;
 }
 
+/* Utils */
+
+.flex {
+  display: flex;
+  gap: var(--_gap, 1rem);
+}
+
+.grid {
+  display: grid;
+  gap: var(--_gap, 1rem);
+}
+
+.button {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.button:disabled {
+  opacity: 0.5;
+}
+
+.button:hover {
+  opacity: 0.7;
+}
+
+.button:disabled:hover {
+  opacity: 0.5;
+}
+
+.radius-5 {
+  border-radius: 5px;
+}
 /* Right Info Bar Start*/
 
 /* Info */
 
-.game--info-holder {
-  display: flex;
+.game-info {
   flex-direction: column;
   justify-content: space-between;
-  background-color: blanchedalmond;
+  background-color: var(--clr-primary);
   padding: 5px;
+  max-height: 512px;
+  width: 351px;
 }
 .general-info {
-  display: flex;
   justify-content: center;
-
-  gap: 1rem;
 }
-.general-info h3 {
+
+.general-info__info {
   font-size: 1.5rem;
 }
 
 .game-buttons {
-  display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 0.5rem;
 }
 
-.secondary-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-.game-buttons button {
-  border: 2px solid black;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.game-buttons .secondary-buttons button {
-  background-color: rgb(255, 168, 168);
-}
-
-.game-buttons .start-wave {
-  background-color: rgb(163, 255, 92);
-}
-.secondary-buttons button {
+.game-button__secondary {
+  background-color: var(--clr-disable);
   flex: 1;
 }
+
+.game-button__secondary.active {
+  background-color: var(--clr-active);
+}
+
+.game-button__primary {
+  background-color: rgb(0, 178, 128);
+}
+
 /* Turret info */
 .turrets-display {
-  margin-top: -80px;
+  margin-top: -40px;
   display: none;
 }
 
 .turrets-display.active {
   display: block;
 }
-.turrets-display--title {
+.turrets-display__title {
   font-size: 2rem;
   text-align: center;
 }
-.turrets-container {
-  display: grid;
-  gap: 10px;
+.turrets-display__container {
   grid-template-columns: repeat(2, 1fr);
 }
-.turret-info-holder {
+
+.turret-conatiner {
   border: 2px solid black;
-  border-radius: 5px;
-  display: flex;
   justify-content: space-evenly;
 }
-.turret-info {
-  display: flex;
+.turret-container__info {
   flex-direction: column;
 }
-.turret-info h1 {
+
+.turret__price,
+.turret__name {
   font-size: 1.25rem;
-  color: rgb(58, 124, 65);
 }
-.turret-info span {
-  font-size: 1.25rem;
+.turret__price {
+  color: var(--clr-disable);
+}
+.turret__name {
   color: goldenrod;
 }
 
 /* Turrets active */
 
-.turret--active {
-  padding: 5px;
+.turret-open {
   display: none;
   flex-direction: column;
-  gap: 10px;
+  gap: 2px;
 }
 
-.turret--active.active {
+.turret-open.active {
   display: flex;
 }
-.turret--general-info {
-  border-radius: 5px;
+
+.turret-open__general {
   background-color: grey;
   border: 2px solid black;
 }
-.turet--image-section {
-  display: flex;
+.general__section {
   justify-content: space-evenly;
   align-items: center;
 }
 
-.turret--name-container {
-  display: flex;
+.general__name-container {
   flex-direction: column;
 }
-.turret-title {
-  font-size: 1.5rem;
+
+.general__name {
+  font-size: 1.25rem;
 }
-.sell-turret {
-  background: rgb(245, 89, 89);
+
+/* to fix */
+.general__button {
+  background: var(--clr-disable);
   border: 0;
   font-size: 1.25rem;
   cursor: pointer;
   padding: 0 5px;
   border-radius: 5px;
 }
-.turret-stats {
-  display: grid;
+
+.general__stats {
   grid-template-columns: repeat(3, 1fr);
 }
-.turret-stats h2 {
+
+.general__stats-stats {
   text-align: center;
   font-size: 22px;
 }
 
-.turret-columns-container {
-  display: grid;
+.turret-open__column-section {
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
 }
 
-.turret-column {
+.turret-open__column {
   border: 2px solid black;
   background-color: grey;
-  border-radius: 5px;
   padding: 0.25rem 0.5rem;
-  display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
 }
-.turret-column h2 {
+.turret-open__column-title {
   font-size: 1.5rem;
 }
 
-.turret--upgrade-list {
-  display: flex;
+.upgrade-list {
   flex-direction: column;
-  gap: 0.5rem;
 }
 
-.turret--upgrade-section {
-  display: flex;
+.upgrade-list__li {
+  list-style: none;
   padding: 0;
   align-items: center;
-  gap: 5px;
 }
 
-.turret--upgrade-section button {
-  color: var(--clr-primary);
-  cursor: pointer;
-  background-color: rgb(58, 124, 65);
+.upgrade-list__button {
+  color: var(--clr-dark);
+  background-color: var(--clr-disable);
   padding: 5px 10px;
   border: 0;
-  border-radius: 5px;
 }
 
-.turret--upgrade-section span {
+.upgrade-list__button.bought {
+  background-color: var(--clr-active);
+}
+
+.upgrade-list__info {
   font-size: 1.5rem;
-  color: var(--clr-primary);
+  color: var(--clr-dark);
 }
 
 .turret--active-close {
-  background-color: grey;
+  background-color: rgb(0, 178, 128);
   color: black;
   border: 2px solid black;
-  border-radius: 5px;
-  cursor: pointer;
   font-size: 1.25rem;
 }
 
