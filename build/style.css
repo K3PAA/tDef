@@ -187,7 +187,7 @@ svg {
   font-size: 1.25rem;
 }
 .turret__price {
-  color: var(--clr-disable);
+  color: var(--clr-dark);
 }
 .turret__name {
   color: goldenrod;

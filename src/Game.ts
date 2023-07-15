@@ -15,11 +15,22 @@ class Game {
   towers: NodeListOf<HTMLImageElement>
   // HTML Show El
   generalImage: HTMLImageElement
-  delTowerBtn: Element
+  sellTowerBtn: Element
   towerNameHTML: HTMLElement
   turretInfo: HTMLElement
   turretsDisplay: HTMLElement
   closeTurretInfoBtn: HTMLElement
+
+  hearthDisplay: HTMLElement
+  moneyDisplay: HTMLElement
+  waveCurrentDisplay: HTMLElement
+  wavesAllDisplay: HTMLElement
+
+  // Game Data
+  hearthAmount: number
+  money: number
+  waveCurrent: number
+  waveAll: number
   // Game Background
   background: Sprite
 
@@ -28,6 +39,7 @@ class Game {
   // detect if player is above place that allows to build tower
   canBuild: Boolean = false
   mousePosition: Point = { x: 0, y: 0 }
+
   // To implement, will hold tower to push if to build info
   activeTower: Tower | null = null
   // hold image data attribute that have tower name
@@ -53,11 +65,26 @@ class Game {
     // HTML ELEMENTS
     this.towers = document.querySelectorAll('.turret')!
     this.generalImage = document.querySelector('.general__image')!
-    this.delTowerBtn = document.querySelector('.sellBtn')!
     this.towerNameHTML = document.querySelector('.general__name')!
     this.turretInfo = document.querySelector('.turret-open')!
     this.turretsDisplay = document.querySelector('.turrets-display')!
+    this.sellTowerBtn = document.getElementById('sellBtn')!
     this.closeTurretInfoBtn = document.getElementById('close-turret')!
+
+    // General Game HTML and Values
+    this.hearthDisplay = document.getElementById('game-heart')!
+    this.hearthAmount = this.gameData[this.level].health
+
+    this.moneyDisplay = document.getElementById('game-money')!
+    this.money = this.gameData[this.level].money
+
+    this.waveCurrentDisplay = document.getElementById('game-wave-current')!
+    this.waveCurrent = 0
+
+    this.wavesAllDisplay = document.getElementById('game-wave-all')!
+    this.waveAll = this.gameData[this.level].waves.length
+
+    this.renderBasicHTML()
 
     this.background = new Sprite(
       this.canvas,
@@ -76,16 +103,46 @@ class Game {
       'click',
       this.closeTurretInfo.bind(this)
     )
+    this.sellTowerBtn.addEventListener('click', this.sellTower.bind(this))
 
     this.canvas.addEventListener('click', this.checkPosition.bind(this))
     this.canvas.addEventListener('dragover', this.updateMousePos.bind(this))
     this.canvas.addEventListener('dragleave', this.dropTurret.bind(this))
   }
 
+  renderBasicHTML() {
+    this.updateHealth()
+    this.updateMoney(0, 'add')
+    this.updateWave()
+    this.updateWaveAmount()
+  }
+
+  updateHealth(val: number = 0) {
+    this.hearthAmount -= val
+    this.hearthDisplay.textContent = `${this.hearthAmount}`
+  }
+
+  updateMoney(val: number = 0, type: 'add' | 'substract') {
+    if (type === 'add') this.money += val
+    if (type === 'substract') this.money -= val
+    this.moneyDisplay.textContent = `${this.money}`
+  }
+
+  updateWave(val: number = 0) {
+    this.waveCurrent += val
+    this.waveCurrentDisplay.textContent = `${this.waveCurrent}`
+  }
+
+  updateWaveAmount(val: number = 0) {
+    if (val) this.waveAll = val
+    this.wavesAllDisplay.textContent = `${this.waveAll}`
+  }
+
   closeTurretInfo(): void {
     this.turretInfo.classList.remove('active')
     this.turretsDisplay.classList.add('active')
     this.towersNotInFocus()
+    this.activeTower = null
   }
 
   showTurretInfo(): void {
@@ -93,9 +150,22 @@ class Game {
     this.turretsDisplay.classList.remove('active')
   }
 
-  checkPosition(e: Event): void {
-    // check if not clicked on building, if no then :
-    this.closeTurretInfo()
+  checkPosition(e: MouseEvent): void {
+    const { x, y } = { x: e.offsetX, y: e.offsetY }
+    let count = 0
+    this.towersArr.forEach((tower: Tower) => {
+      const { position, size } = tower
+      if (
+        this.isPointInSquare({ x, y }, { x: position.x, y: position.y, size })
+      ) {
+        this.activeTower = tower
+        this.showActiveTowerHTML()
+      } else count++
+    })
+
+    if (count === this.towersArr.length) {
+      this.closeTurretInfo()
+    }
   }
 
   isPointInSquare(a: Point, b: Square): Boolean {
@@ -106,22 +176,38 @@ class Game {
     return false
   }
 
-  startDragging(tower: HTMLImageElement): void {
-    const towerName = tower.dataset.name!
-
-    this.activeTowerName = towerName
-    this.isDragging = true
-  }
-
   towersNotInFocus(): void {
     this.towersArr.forEach((tower) => {
       if (tower.active) tower.active = false
     })
   }
 
+  sellTower() {
+    if (!this.activeTower) {
+      this.createError('No tower provided')
+    }
+    this.interactive.interactivePositions.push({
+      x: this.activeTower.position.x,
+      y: this.activeTower.position.y,
+      size: this.activeTower.size,
+    })
+
+    this.towersArr = this.towersArr.filter((tower: Tower) => {
+      return (
+        tower.position.x !== this.activeTower?.position.x &&
+        tower.position.y !== this.activeTower?.position.y
+      )
+    })
+
+    this.updateMoney(this.activeTower.sellFor, 'add')
+    this.closeTurretInfo()
+  }
+
   dropTurret(): void {
     if (this.canBuild && this.activeTower) {
       this.towersNotInFocus()
+
+      this.updateMoney(this.activeTower.cost, 'substract')
       this.towersArr.push(this.activeTower)
 
       // if place is used then remove it from interactive positions
@@ -130,16 +216,20 @@ class Game {
           return pos !== this.activeTower?.position
         })
 
-      this.showActiveTowerHTML(this.activeTower)
+      this.showActiveTowerHTML()
       this.canBuild = false
-      this.activeTower = null
-
-      console.log(this.towersArr)
     }
 
     this.isDragging = false
     this.mousePosition = { x: 0, y: 0 }
     this.activeTowerName = null
+  }
+
+  startDragging(tower: HTMLImageElement): void {
+    const towerName = tower.dataset.name!
+
+    this.activeTowerName = towerName
+    this.isDragging = true
   }
 
   updateMousePos(e: DragEvent): void {
@@ -150,13 +240,13 @@ class Game {
     throw new Error(errMsg)
   }
 
-  selectTower(pos: Square): Tower {
+  selectTower(pos: Point): Tower {
     switch (this.activeTowerName) {
       case 'speed':
         return new SpeedTower(
           this.canvas,
           this.c,
-          100,
+          15,
           20,
           50,
           100,
@@ -169,7 +259,7 @@ class Game {
         return new Tower(
           this.canvas,
           this.c,
-          100,
+          15,
           20,
           50,
           120,
@@ -182,7 +272,7 @@ class Game {
         return new Tower(
           this.canvas,
           this.c,
-          100,
+          25,
           20,
           50,
           300,
@@ -195,7 +285,7 @@ class Game {
         return new Tower(
           this.canvas,
           this.c,
-          100,
+          25,
           20,
           50,
           120,
@@ -208,7 +298,7 @@ class Game {
         return new Tower(
           this.canvas,
           this.c,
-          100,
+          35,
           20,
           50,
           140,
@@ -221,7 +311,7 @@ class Game {
         return new Tower(
           this.canvas,
           this.c,
-          100,
+          35,
           20,
           50,
           160,
@@ -234,7 +324,7 @@ class Game {
         return new Tower(
           this.canvas,
           this.c,
-          100,
+          50,
           20,
           50,
           180,
@@ -247,7 +337,7 @@ class Game {
         return new Tower(
           this.canvas,
           this.c,
-          100,
+          50,
           20,
           50,
           200,
@@ -273,7 +363,7 @@ class Game {
       if (!this.isPointInSquare(this.mousePosition, pos)) {
         count++
         this.drawInteractivePlace(pos)
-      } else if (!this.activeTower) {
+      } else {
         this.activeTower = this.selectTower(pos)
       }
     })
@@ -294,15 +384,23 @@ class Game {
 
   drawTowers() {
     this.towersArr.forEach((tower) => {
+      tower.drawRange()
       tower.draw()
     })
   }
 
-  showActiveTowerHTML(tower: Tower): void {
+  showActiveTowerHTML(): void {
     this.turretsDisplay.classList.remove('active')
     // To change later
-    this.generalImage.src = '../assets/Turret/turret1.png'
-    this.towerNameHTML.innerText = 'Scooby Doo'
+    if (this.activeTower) {
+      this.towersNotInFocus()
+      this.activeTower.active = true
+      this.generalImage.src = this.activeTower.imgSrc
+      console.log(this.activeTower)
+    }
+
+    this.towerNameHTML.innerText = 'tower'
+    this.sellTowerBtn.textContent = `Sell for ${this.activeTower?.sellFor}$`
     this.turretInfo.classList.add('active')
   }
 

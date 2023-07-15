@@ -1,7 +1,7 @@
 "use strict";
 const levels = [
     {
-        health: 20,
+        health: 15,
         money: 50,
         background: '../assets/Levels/level1/level-1.png',
         waves: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
