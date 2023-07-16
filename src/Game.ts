@@ -13,13 +13,9 @@ class Game {
 
   // HTML towers
   towers: NodeListOf<HTMLImageElement>
+  singleTowerInfo: TowerInfo
   // HTML Show El
-  generalImage: HTMLImageElement
-  sellTowerBtn: Element
-  towerNameHTML: HTMLElement
-  turretInfo: HTMLElement
-  turretsDisplay: HTMLElement
-  closeTurretInfoBtn: HTMLElement
+  errorDisplay: HTMLElement
 
   hearthDisplay: HTMLElement
   moneyDisplay: HTMLElement
@@ -39,11 +35,10 @@ class Game {
   // detect if player is above place that allows to build tower
   canBuild: Boolean = false
   mousePosition: Point = { x: 0, y: 0 }
+  errorInterval: number | undefined = undefined
 
   // To implement, will hold tower to push if to build info
   activeTower: Tower | null = null
-  // hold image data attribute that have tower name
-  activeTowerName: null | string = null
 
   // Arrays that will contains enemies and towers when on screen
   towersArr: TowerTypes[]
@@ -62,14 +57,16 @@ class Game {
       this.gameData[this.level].interactive
     )
 
+    this.towersArr = []
+    this.enemiesArr = []
+
     // HTML ELEMENTS
+    this.singleTowerInfo = new TowerInfo(
+      this.towersNotInFocus.bind(this),
+      this.deleteTower.bind(this)
+    )
+
     this.towers = document.querySelectorAll('.turret')!
-    this.generalImage = document.querySelector('.general__image')!
-    this.towerNameHTML = document.querySelector('.general__name')!
-    this.turretInfo = document.querySelector('.turret-open')!
-    this.turretsDisplay = document.querySelector('.turrets-display')!
-    this.sellTowerBtn = document.getElementById('sellBtn')!
-    this.closeTurretInfoBtn = document.getElementById('close-turret')!
 
     // General Game HTML and Values
     this.hearthDisplay = document.getElementById('game-heart')!
@@ -84,6 +81,7 @@ class Game {
     this.wavesAllDisplay = document.getElementById('game-wave-all')!
     this.waveAll = this.gameData[this.level].waves.length
 
+    this.errorDisplay = document.querySelector('.error-info')!
     this.renderBasicHTML()
 
     this.background = new Sprite(
@@ -92,22 +90,150 @@ class Game {
       '../assets/Levels/level1/level-1.png'
     )
 
-    this.towersArr = []
-    this.enemiesArr = []
-
     this.towers.forEach((tower, i) => {
       tower.addEventListener('dragstart', this.startDragging.bind(this, tower))
     })
 
-    this.closeTurretInfoBtn.addEventListener(
-      'click',
-      this.closeTurretInfo.bind(this)
-    )
-    this.sellTowerBtn.addEventListener('click', this.sellTower.bind(this))
-
-    this.canvas.addEventListener('click', this.checkPosition.bind(this))
+    this.canvas.addEventListener('click', this.whatIsClicked.bind(this))
     this.canvas.addEventListener('dragover', this.updateMousePos.bind(this))
     this.canvas.addEventListener('dragleave', this.dropTurret.bind(this))
+  }
+
+  isPointInSquare(a: Point, b: Square): Boolean {
+    if (a.x < b.x + b.size && a.x > b.x && a.y < b.y + b.size && a.y > b.y) {
+      return true
+    }
+    return false
+  }
+
+  toggleError(text: string, duration: number) {
+    let time = duration / 6
+    let count = 0
+    this.errorDisplay.innerText = text
+
+    if (!this.errorInterval) {
+      this.errorInterval = setInterval(() => {
+        this.errorDisplay.classList.toggle('active')
+        count++
+        if (count * time === duration) {
+          if (this.errorDisplay.className.includes('active')) {
+            this.errorDisplay.classList.remove('active')
+          }
+          clearInterval(this.errorInterval)
+          this.errorInterval = undefined
+        }
+      }, time)
+    }
+  }
+
+  createError(errMsg: string): never {
+    throw new Error(errMsg)
+  }
+
+  towersNotInFocus(): void {
+    this.towersArr.forEach((tower) => {
+      if (tower.active) tower.active = false
+    })
+  }
+
+  closeTowerInfo() {
+    this.activeTower = null
+    this.singleTowerInfo.close()
+  }
+
+  startDragging(tower: HTMLImageElement): void {
+    this.activeTower = this.selectTower(tower.dataset.name!)
+    this.isDragging = true
+  }
+
+  updateMousePos(e: DragEvent): void {
+    const { x, y } = { x: e.offsetX, y: e.offsetY }
+    this.mousePosition = { x, y }
+  }
+
+  drawIfCanBuild(): void {
+    if (!this.isDragging && !this.activeTower) return
+    // will count how many available slots for building
+    let count = 0
+
+    for (const pos of this.interactive.interactivePositions) {
+      if (!this.isPointInSquare(this.mousePosition, pos)) {
+        count++
+        if (this.isDragging) this.drawInteractivePlace(pos)
+      } else if (this.activeTower && this.activeTower.position !== pos) {
+        this.canBuild = true
+        this.activeTower.position = pos
+      }
+    }
+    // if tower is not above building place
+    if (count === this.interactive.interactivePositions.length) {
+      this.canBuild = false
+    }
+  }
+
+  dropTurret(): void {
+    if (
+      this.canBuild &&
+      this.activeTower &&
+      this.money - this.activeTower.cost >= 0
+    ) {
+      this.updateMoney(this.activeTower.cost, 'substract')
+      this.towersArr.push(this.activeTower)
+
+      // if place is used then remove it from interactive positions
+      this.interactive.interactivePositions =
+        this.interactive.interactivePositions.filter(
+          (pos) => pos !== this.activeTower?.position
+        )
+
+      this.singleTowerInfo.show(this.activeTower)
+      this.canBuild = false
+    } else if (
+      this.activeTower &&
+      this.canBuild &&
+      this.money - this.activeTower.cost <= 0
+    ) {
+      this.toggleError(`Not enough money`, 3500)
+    }
+    this.isDragging = false
+    this.mousePosition = { x: 0, y: 0 }
+  }
+
+  whatIsClicked(e: MouseEvent): void {
+    const { x, y } = { x: e.offsetX, y: e.offsetY }
+    let count = 0
+
+    for (const tower of this.towersArr) {
+      const { position: pos, size } = tower
+      if (this.isPointInSquare({ x, y }, { x: pos.x, y: pos.y, size })) {
+        this.activeTower = tower
+        this.singleTowerInfo.show(this.activeTower)
+      } else count++
+    }
+
+    if (count === this.towersArr.length) {
+      this.singleTowerInfo.close()
+      this.activeTower = null
+    }
+  }
+
+  deleteTower(): void {
+    if (!this.activeTower) this.createError('Cant delete uncreated tower')
+
+    this.interactive.interactivePositions.push({
+      x: this.activeTower.position.x,
+      y: this.activeTower.position.y,
+      size: this.activeTower.size,
+    })
+
+    // Refactor, previous code bugging
+    this.towersArr = this.towersArr.filter((tower: Tower) => {
+      return tower && this.activeTower && tower.id !== this.activeTower.id
+    })
+
+    this.updateMoney(this.activeTower.sellFor, 'add')
+    this.singleTowerInfo.sell(this.activeTower)
+    this.activeTower = null
   }
 
   renderBasicHTML() {
@@ -138,110 +264,12 @@ class Game {
     this.wavesAllDisplay.textContent = `${this.waveAll}`
   }
 
-  closeTurretInfo(): void {
-    this.turretInfo.classList.remove('active')
-    this.turretsDisplay.classList.add('active')
-    this.towersNotInFocus()
-    this.activeTower = null
-  }
-
   showTurretInfo(): void {
-    this.turretInfo.classList.add('active')
-    this.turretsDisplay.classList.remove('active')
+    this.singleTowerInfo.open()
   }
 
-  checkPosition(e: MouseEvent): void {
-    const { x, y } = { x: e.offsetX, y: e.offsetY }
-    let count = 0
-    this.towersArr.forEach((tower: Tower) => {
-      const { position, size } = tower
-      if (
-        this.isPointInSquare({ x, y }, { x: position.x, y: position.y, size })
-      ) {
-        this.activeTower = tower
-        this.showActiveTowerHTML()
-      } else count++
-    })
-
-    if (count === this.towersArr.length) {
-      this.closeTurretInfo()
-    }
-  }
-
-  isPointInSquare(a: Point, b: Square): Boolean {
-    if (a.x < b.x + b.size && a.x > b.x && a.y < b.y + b.size && a.y > b.y) {
-      return true
-    }
-
-    return false
-  }
-
-  towersNotInFocus(): void {
-    this.towersArr.forEach((tower) => {
-      if (tower.active) tower.active = false
-    })
-  }
-
-  sellTower() {
-    if (!this.activeTower) {
-      this.createError('No tower provided')
-    }
-    this.interactive.interactivePositions.push({
-      x: this.activeTower.position.x,
-      y: this.activeTower.position.y,
-      size: this.activeTower.size,
-    })
-
-    this.towersArr = this.towersArr.filter((tower: Tower) => {
-      return (
-        tower.position.x !== this.activeTower?.position.x &&
-        tower.position.y !== this.activeTower?.position.y
-      )
-    })
-
-    this.updateMoney(this.activeTower.sellFor, 'add')
-    this.closeTurretInfo()
-  }
-
-  dropTurret(): void {
-    if (this.canBuild && this.activeTower) {
-      this.towersNotInFocus()
-
-      this.updateMoney(this.activeTower.cost, 'substract')
-      this.towersArr.push(this.activeTower)
-
-      // if place is used then remove it from interactive positions
-      this.interactive.interactivePositions =
-        this.interactive.interactivePositions.filter((pos) => {
-          return pos !== this.activeTower?.position
-        })
-
-      this.showActiveTowerHTML()
-      this.canBuild = false
-    }
-
-    this.isDragging = false
-    this.mousePosition = { x: 0, y: 0 }
-    this.activeTowerName = null
-  }
-
-  startDragging(tower: HTMLImageElement): void {
-    const towerName = tower.dataset.name!
-
-    this.activeTowerName = towerName
-    this.isDragging = true
-  }
-
-  updateMousePos(e: DragEvent): void {
-    const { x, y } = { x: e.offsetX, y: e.offsetY }
-    this.mousePosition = { x, y }
-  }
-  createError(errMsg: string): never {
-    throw new Error(errMsg)
-  }
-
-  selectTower(pos: Point): Tower {
-    switch (this.activeTowerName) {
+  selectTower(name: string): Tower {
+    switch (name) {
       case 'speed':
         return new SpeedTower(
           this.canvas,
@@ -250,7 +278,7 @@ class Game {
           20,
           50,
           100,
-          pos,
+          { x: 0, y: 0 },
           '../assets/Turret/turret1.png'
         )
         break
@@ -263,7 +291,7 @@ class Game {
           20,
           50,
           120,
-          pos,
+          { x: 0, y: 0 },
           '../assets/Turret/turret2.png'
         )
         break
@@ -276,7 +304,7 @@ class Game {
           20,
           50,
           300,
-          pos,
+          { x: 0, y: 0 },
           '../assets/Turret/turret3.png'
         )
         break
@@ -289,7 +317,7 @@ class Game {
           20,
           50,
           120,
-          pos,
+          { x: 0, y: 0 },
           '../assets/Turret/turret4.png'
         )
         break
@@ -302,7 +330,7 @@ class Game {
           20,
           50,
           140,
-          pos,
+          { x: 0, y: 0 },
           '../assets/Turret/turret5.png'
         )
         break
@@ -315,7 +343,7 @@ class Game {
           20,
           50,
           160,
-          pos,
+          { x: 0, y: 0 },
           '../assets/Turret/turret6.png'
         )
         break
@@ -328,7 +356,7 @@ class Game {
           20,
           50,
           180,
-          pos,
+          { x: 0, y: 0 },
           '../assets/Turret/turret7.png'
         )
         break
@@ -341,39 +369,13 @@ class Game {
           20,
           50,
           200,
-          pos,
+          { x: 0, y: 0 },
           '../assets/Turret/turret8.png'
         )
         break
       default:
-        this.createError(
-          `Provided tower name: ${this.activeTowerName} does not match any tower name`
-        )
+        this.createError(`Tower ${name} does not match any tower name`)
         break
-    }
-  }
-
-  drawIfCanBuild(): void {
-    if (!this.isDragging) return
-    // will count how many available slots for building
-    let count = 0
-    let buildingPositions = this.interactive.interactivePositions
-
-    buildingPositions.forEach((pos) => {
-      if (!this.isPointInSquare(this.mousePosition, pos)) {
-        count++
-        this.drawInteractivePlace(pos)
-      } else {
-        this.activeTower = this.selectTower(pos)
-      }
-    })
-
-    // If all building spots aren't taken then enable building a tower
-    if (count !== buildingPositions.length && !this.canBuild) {
-      this.canBuild = true
-    } else if (count === buildingPositions.length && this.canBuild) {
-      if (this.activeTower) this.activeTower = null
-      this.canBuild = false
     }
   }
 
@@ -387,21 +389,6 @@ class Game {
       tower.drawRange()
       tower.draw()
     })
-  }
-
-  showActiveTowerHTML(): void {
-    this.turretsDisplay.classList.remove('active')
-    // To change later
-    if (this.activeTower) {
-      this.towersNotInFocus()
-      this.activeTower.active = true
-      this.generalImage.src = this.activeTower.imgSrc
-      console.log(this.activeTower)
-    }
-
-    this.towerNameHTML.innerText = 'tower'
-    this.sellTowerBtn.textContent = `Sell for ${this.activeTower?.sellFor}$`
-    this.turretInfo.classList.add('active')
   }
 
   animate(): void {

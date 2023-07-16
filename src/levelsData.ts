@@ -10,7 +10,7 @@ interface Level {
 const levels: Level[] = [
   {
     health: 15,
-    money: 50,
+    money: 30,
     background: '../assets/Levels/level1/level-1.png',
     waves: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
     interactive: [

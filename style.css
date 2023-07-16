@@ -83,7 +83,22 @@ svg {
 
 .game {
   display: flex;
+  top: 50px;
+  justify-content: center;
+  position: relative;
   font-family: 'Monogram', Arial, sans-serif;
+}
+
+.error-info {
+  position: absolute;
+  top: 100%;
+  font-size: 2rem;
+  color: red;
+  opacity: 0;
+}
+
+.error-info.active {
+  opacity: 1;
 }
 
 /* Utils */

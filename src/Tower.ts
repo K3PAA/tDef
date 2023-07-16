@@ -10,6 +10,9 @@ interface TowerDetails {
 type TowerTypes = Tower | SpeedTower
 
 class Tower extends Sprite implements TowerDetails {
+  static count: number = 0
+  public id: number
+
   public size: number = 96
   public offset: Point = {
     x: (this.size - 64) / 2,
@@ -29,6 +32,7 @@ class Tower extends Sprite implements TowerDetails {
     public src: string
   ) {
     super(canvas, c, src, position)
+    this.id = ++Tower.count
   }
 
   update(): void {}

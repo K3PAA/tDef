@@ -158,9 +158,23 @@
             </div>
 
             <div class="general__stats grid">
-              <h2 class="general__stats-stats">DMG:<span>100 +0</span></h2>
-              <h2 class="general__stats-stats">AS:<span>20 +0</span></h2>
-              <h2 class="general__stats-stats">RANGE:<span>200 +0</span></h2>
+              <h2 class="general__stats-stats">
+                DMG:<span class="turret-base-dmg">100</span>+<span
+                  class="turret-bonus-dmg"
+                >
+                  0</span
+                >
+              </h2>
+              <h2 class="general__stats-stats">
+                AS:<span class="turret-base-as">20</span> +<span
+                  class="turret-bonus-as"
+                  >0</span
+                >
+              </h2>
+              <h2 class="general__stats-stats">
+                RANGE:<span class="turret-base-range">200</span>
+                <span class="turret-bonus-range"> +0</span>
+              </h2>
             </div>
           </div>
 
@@ -286,12 +300,15 @@
           </button>
         </section>
       </div>
+
+      <h3 class="error-info"></h3>
     </main>
 
     <script src="./build/js/levelsData.js"></script>
     <script src="./build/js/ConvertData.js"></script>
     <script src="./build/js/Sprite.js"></script>
     <script src="./build/js/Tower.js"></script>
+    <script src="./build/js/TowerInfo.js"></script>
     <script src="./build/js/Game.js"></script>
     <script src="./build/js/main.js"></script>
   </body>
