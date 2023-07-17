@@ -2,17 +2,18 @@ class Sprite {
   image: HTMLImageElement
 
   constructor(
-    public canvas: HTMLCanvasElement,
-    public c: CanvasRenderingContext2D,
-    public imgSrc: string,
+    public canvas: HTMLCanvasElement | undefined,
+    public c: CanvasRenderingContext2D | undefined,
+    public imgSrc: string | undefined,
     public position: Point = { x: 0, y: 0 },
     public offset: Point = { x: 0, y: 0 }
   ) {
     this.image = new Image()
-    this.image.src = this.imgSrc
+    if (this.imgSrc) this.image.src = this.imgSrc
   }
 
   draw(): void {
+    if (!this.c) return
     this.c.drawImage(
       this.image,
       0,

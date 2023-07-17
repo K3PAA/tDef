@@ -118,7 +118,7 @@ class TowerInfo {
 
     list.forEach((btn: HTMLButtonElement, i: any) => {
       if (btn.className.includes('bought')) btn.classList.remove('bought')
-      btn.textContent = `+${towerType[i].bonus} -${tower.upgrades.dmg[i].price}$`
+      btn.textContent = `+${towerType[i].bonus} -${towerType[i].price}$`
       if (towerType[i].bought) {
         btn.classList.add('bought')
         btn.disabled = true

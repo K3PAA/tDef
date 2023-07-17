@@ -1,28 +1,10 @@
-interface TowerDetails {
-  cost: number
-  totalDmg: number
-  totalAs: number
-  totalRange: number
-  position: Point
-  size: number
-}
+//https:stackoverflow.com/questions/49061774/how-to-build-a-typescript-class-constructor-with-object-defining-class-fields
+type NonMethodKeys<T> = {
+  [P in keyof T]: T[P] extends Function ? never : P
+}[keyof T]
+type RemoveMethods<T> = Pick<T, NonMethodKeys<T>>
 
-type UpgradeValues = {
-  price: number
-  bonus: number
-  bought: boolean
-  active: boolean
-}
-
-type Upgrade = {
-  dmg: UpgradeValues[]
-  as: UpgradeValues[]
-  range: UpgradeValues[]
-}
-
-type TowerTypes = Tower | SpeedTower
-
-class Tower extends Sprite implements TowerDetails {
+class Tower extends Sprite {
   static count: number = 0
   public id: number
 
@@ -32,7 +14,7 @@ class Tower extends Sprite implements TowerDetails {
     y: (this.size - 64) / 2,
   }
   public active: Boolean = true
-  public sellFor = Math.floor(this.cost * 0.7)
+  public sellFor: number
 
   public bonusDmg = 0
   public basicDmg = 0
@@ -43,39 +25,22 @@ class Tower extends Sprite implements TowerDetails {
   public bonusRange = 0
   public basicRange = 0
 
-  public upgrades: Upgrade = {
-    dmg: [
-      { price: 10, bonus: 10, bought: false, active: true },
-      { price: 15, bonus: 18, bought: false, active: false },
-      { price: 10, bonus: 10, bought: false, active: false },
-      { price: 20, bonus: 10, bought: false, active: false },
-    ],
-    as: [
-      { price: 10, bonus: 10, bought: false, active: true },
-      { price: 15, bonus: 18, bought: false, active: false },
-      { price: 10, bonus: 10, bought: false, active: false },
-      { price: 20, bonus: 10, bought: false, active: false },
-    ],
-    range: [
-      { price: 10, bonus: 30, bought: false, active: true },
-      { price: 35, bonus: 68, bought: false, active: false },
-      { price: 50, bonus: 80, bought: false, active: false },
-      { price: 70, bonus: 120, bought: false, active: false },
-    ],
-  }
+  public canvas: HTMLCanvasElement
+  public c: CanvasRenderingContext2D
+  public cost: number
+  public totalDmg: number
+  public totalAs: number
+  public totalRange: number
+  public position: Point
+  public src: string
+  public upgrades: Upgrade
 
-  constructor(
-    public canvas: HTMLCanvasElement,
-    public c: CanvasRenderingContext2D,
-    public cost: number,
-    public totalDmg: number,
-    public totalAs: number,
-    public totalRange: number,
-    public position: Point,
-    public src: string
-  ) {
-    super(canvas, c, src, position)
+  constructor(data: RemoveMethods<Tower>) {
+    super(data.canvas, data.c, data.src, data.position)
+    Object.assign(this, data)
+
     this.id = ++Tower.count
+    this.sellFor = Math.floor(this.cost * 0.7)
     this.basicDmg = this.totalDmg
     this.basicAs = this.totalAs
     this.basicRange = this.totalRange
@@ -145,21 +110,5 @@ class Tower extends Sprite implements TowerDetails {
       this.c.strokeStyle = 'blue'
       this.c.stroke()
     }
-  }
-}
-
-class SpeedTower extends Tower {
-  constructor(
-    canvas: HTMLCanvasElement,
-    c: CanvasRenderingContext2D,
-    cost: number,
-    dmg: number,
-    attackSpeed: number,
-    range: number,
-    position: Point,
-
-    src: string
-  ) {
-    super(canvas, c, cost, dmg, attackSpeed, range, position, src)
   }
 }
