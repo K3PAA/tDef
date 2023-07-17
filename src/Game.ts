@@ -300,101 +300,42 @@ class Game {
   }
 
   selectTower(name: string): Tower {
+    // otherwise turrets with same type will inherit upgrade stats one from another
+    let fakeDeepCopy = (x: TowerDetail) => {
+      return { ...JSON.parse(JSON.stringify(x)) }
+    }
     switch (name) {
       case 'speed':
-        return new Tower({ canvas: this.canvas, c: this.c, ...towersData[0] })
+        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[0]))
         break
 
-      // case 'burn':
-      //   return new Tower(
-      //     this.canvas,
-      //     this.c,
-      //     15,
-      //     20,
-      //     50,
-      //     120,
-      //     { x: 0, y: 0 },
-      //     '../assets/Turret/turret2.png'
-      //   )
-      //   break
+      case 'burn':
+        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[1]))
+        break
 
-      // case 'freeze':
-      //   return new Tower(
-      //     this.canvas,
-      //     this.c,
-      //     25,
-      //     20,
-      //     50,
-      //     300,
-      //     { x: 0, y: 0 },
-      //     '../assets/Turret/turret3.png'
-      //   )
-      //   break
+      case 'freeze':
+        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[2]))
+        break
 
-      // case 'laser':
-      //   return new Tower(
-      //     this.canvas,
-      //     this.c,
-      //     25,
-      //     20,
-      //     50,
-      //     120,
-      //     { x: 0, y: 0 },
-      //     '../assets/Turret/turret4.png'
-      //   )
-      //   break
+      case 'laser':
+        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[3]))
+        break
 
-      // case 'thunder':
-      //   return new Tower(
-      //     this.canvas,
-      //     this.c,
-      //     35,
-      //     20,
-      //     50,
-      //     140,
-      //     { x: 0, y: 0 },
-      //     '../assets/Turret/turret5.png'
-      //   )
-      //   break
+      case 'thunder':
+        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[4]))
+        break
 
-      // case 'bubble':
-      //   return new Tower(
-      //     this.canvas,
-      //     this.c,
-      //     35,
-      //     20,
-      //     50,
-      //     160,
-      //     { x: 0, y: 0 },
-      //     '../assets/Turret/turret6.png'
-      //   )
-      //   break
+      case 'bubble':
+        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[5]))
+        break
 
-      // case 'rocket':
-      //   return new Tower(
-      //     this.canvas,
-      //     this.c,
-      //     50,
-      //     20,
-      //     50,
-      //     180,
-      //     { x: 0, y: 0 },
-      //     '../assets/Turret/turret7.png'
-      //   )
-      //   break
+      case 'rocket':
+        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[6]))
+        break
 
-      // case 'metal':
-      //   return new Tower(
-      //     this.canvas,
-      //     this.c,
-      //     50,
-      //     20,
-      //     50,
-      //     200,
-      //     { x: 0, y: 0 },
-      //     '../assets/Turret/turret8.png'
-      //   )
-      //   break
+      case 'metal':
+        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[7]))
+        break
       default:
         this.createError(`Tower ${name} does not match any tower name`)
         break

@@ -153,7 +153,11 @@ class TowerInfo {
 
   updateBonus(tower: Tower, type: string) {
     this.displayButtons(tower, type)
-    if (type === 'dmg') this.bonusDmg.textContent = `${tower.bonusDmg}`
+    if (type === 'all') {
+      this.bonusDmg.textContent = `${tower.bonusDmg}`
+      this.bonusAs.textContent = `${tower.bonusAs}`
+      this.bonusRange.textContent = `${tower.bonusRange}`
+    } else if (type === 'dmg') this.bonusDmg.textContent = `${tower.bonusDmg}`
     else if (type === 'as') this.bonusAs.textContent = `${tower.bonusAs}`
     else if (type === 'range') {
       this.bonusRange.textContent = `${tower.bonusRange}`
@@ -162,6 +166,7 @@ class TowerInfo {
   }
 
   show(tower: Tower): void {
+    console.log(tower.totalDmg)
     if (!tower) return
 
     this.updateBonus(tower, 'all')
@@ -170,7 +175,7 @@ class TowerInfo {
     // To change later
 
     tower.active = true
-    this.image.src = tower.imgSrc
+    if (tower.imgSrc) this.image.src = tower.imgSrc
 
     this.name.innerText = 'tower'
     this.sellBtn.textContent = `Sell for ${tower.sellFor}$`

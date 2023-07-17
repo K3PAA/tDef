@@ -1,9 +1,3 @@
-//https:stackoverflow.com/questions/49061774/how-to-build-a-typescript-class-constructor-with-object-defining-class-fields
-type NonMethodKeys<T> = {
-  [P in keyof T]: T[P] extends Function ? never : P
-}[keyof T]
-type RemoveMethods<T> = Pick<T, NonMethodKeys<T>>
-
 class Tower extends Sprite {
   static count: number = 0
   public id: number
@@ -13,37 +7,43 @@ class Tower extends Sprite {
     x: (this.size - 64) / 2,
     y: (this.size - 64) / 2,
   }
+  public cost: number
   public active: Boolean = true
   public sellFor: number
 
+  public totalDmg: number
   public bonusDmg = 0
   public basicDmg = 0
 
+  public totalAs: number
   public bonusAs = 0
   public basicAs = 0
 
+  public totalRange: number
   public bonusRange = 0
   public basicRange = 0
 
-  public canvas: HTMLCanvasElement
-  public c: CanvasRenderingContext2D
-  public cost: number
-  public totalDmg: number
-  public totalAs: number
-  public totalRange: number
-  public position: Point
-  public src: string
   public upgrades: Upgrade
 
-  constructor(data: RemoveMethods<Tower>) {
-    super(data.canvas, data.c, data.src, data.position)
-    Object.assign(this, data)
-
+  constructor(
+    public canvas: HTMLCanvasElement,
+    public c: CanvasRenderingContext2D,
+    public data: TowerDetail
+  ) {
+    super(canvas, c, data.src, data.position)
     this.id = ++Tower.count
+    this.upgrades = data.upgrades
+
+    this.cost = data.cost
     this.sellFor = Math.floor(this.cost * 0.7)
-    this.basicDmg = this.totalDmg
-    this.basicAs = this.totalAs
-    this.basicRange = this.totalRange
+
+    this.totalDmg = data.totalDmg
+    this.totalAs = data.totalAs
+    this.totalRange = data.totalRange
+
+    this.basicDmg = data.totalDmg
+    this.basicAs = data.totalAs
+    this.basicRange = data.totalRange
   }
 
   update(): void {}
