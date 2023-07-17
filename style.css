@@ -288,7 +288,11 @@ svg {
   border: 0;
 }
 
-.upgrade-list__button.bought {
+.upgrade-list__button:disabled {
+  opacity: 0.5;
+}
+
+.upgrade-list__button.bought:disabled {
   background-color: var(--clr-active);
 }
 

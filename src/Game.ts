@@ -63,7 +63,8 @@ class Game {
     // HTML ELEMENTS
     this.singleTowerInfo = new TowerInfo(
       this.towersNotInFocus.bind(this),
-      this.deleteTower.bind(this)
+      this.deleteTower.bind(this),
+      this.upgradeTower.bind(this)
     )
 
     this.towers = document.querySelectorAll('.turret')!
@@ -234,6 +235,33 @@ class Game {
     this.updateMoney(this.activeTower.sellFor, 'add')
     this.singleTowerInfo.sell(this.activeTower)
     this.activeTower = null
+  }
+
+  upgradeTower(i: number, type: string) {
+    if (!this.activeTower) return
+    let price
+    let bonus
+    if (type === 'as') {
+      price = this.activeTower.upgrades.as[i].price
+      bonus = this.activeTower.upgrades.as[i].bonus
+    } else if (type === 'dmg') {
+      price = this.activeTower.upgrades.dmg[i].price
+      bonus = this.activeTower.upgrades.dmg[i].bonus
+    } else if (type === 'range') {
+      price = this.activeTower.upgrades.range[i].price
+      bonus = this.activeTower.upgrades.range[i].bonus
+    }
+    if (!price || !bonus) return
+
+    if (this.money - price < 0) {
+      this.toggleError(`need ${Math.abs(this.money - price)}$`, 2500)
+      return
+    }
+
+    this.updateMoney(price, 'substract')
+    this.activeTower.upgrade(price, bonus, i, type)
+
+    this.singleTowerInfo.updateBonus(this.activeTower, type)
   }
 
   renderBasicHTML() {
