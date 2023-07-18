@@ -32,7 +32,7 @@ class Game {
   towersData: TowerDetail[] = towersData
   enemiesData: EnemyData[] = enemiesData
   towersArr: Tower[]
-  enemiesArr: object[]
+  enemiesArr: Enemy[]
 
   constructor(public level: number = 0) {
     this.canvas = document.querySelector('canvas')!
@@ -118,6 +118,17 @@ class Game {
 
   isPointInSquare(a: Point, b: Square): Boolean {
     if (a.x < b.x + b.size && a.x > b.x && a.y < b.y + b.size && a.y > b.y) {
+      return true
+    }
+    return false
+  }
+
+  checkCircleCollision(a: any, b: any) {
+    let x = a.position.x - b.position.x
+    let y = a.position.y - b.position.y
+    let c = Math.hypot(x, y)
+
+    if (c <= a.radius + b.radius) {
       return true
     }
     return false
@@ -317,17 +328,35 @@ class Game {
 
   drawTowers() {
     this.towersArr.forEach((tower) => {
-      tower.drawRange()
+      // Tower have small offset so the shooting calculation had started a little to soon
+      let centerTowerPos = {
+        ...tower,
+        position: {
+          x: tower.position.x + tower.offset.x,
+          y: tower.position.y + tower.offset.y,
+        },
+      }
+      if (!tower.target) {
+        for (const enemy of this.enemiesArr) {
+          if (this.checkCircleCollision(centerTowerPos, enemy)) {
+            tower.target = enemy
+            break
+          }
+        }
+      } else {
+        if (!this.checkCircleCollision(centerTowerPos, tower.target)) {
+          tower.target.color = 'red'
+          tower.target = null
+        }
+      }
+      tower.update()
       tower.draw()
     })
   }
-
   drawEnemies() {
-    if (this.enemiesArr.length === 0) return
-
-    // type Enemy powinien być ale nie chce wejść
-    this.enemiesArr.forEach((enemy: any): void => {
+    this.enemiesArr.forEach((enemy) => {
       enemy.update()
+      enemy.draw()
     })
   }
 

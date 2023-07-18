@@ -1,13 +1,17 @@
-class Enemy {
+class Enemy extends Sprite {
   public health: number
   public reward: number
   public moveSpeed: number
+
+  public radians = 0
+  public color: string = 'red'
   public src: string
   public size: number
   public position: Point = { x: 0, y: 0 }
   public velocity: Point = { x: 0, y: 0 }
   public currentStage: number = 0
-  public image: HTMLImageElement
+
+  public radius: number
 
   constructor(
     public canvas: HTMLCanvasElement,
@@ -15,6 +19,7 @@ class Enemy {
     public path: Point[],
     public data: EnemyData
   ) {
+    super(canvas, c, data.src)
     this.health = data.health
     this.reward = data.reward
     this.moveSpeed = data.moveSpeed
@@ -23,18 +28,16 @@ class Enemy {
 
     this.position.x = this.path[this.currentStage].x
     this.position.y = this.path[this.currentStage].y
-    this.image = new Image()
-    this.image.src = this.src
+    this.radius = this.size / 2
   }
 
   calculateVelocity() {
     const x = this.position.x - this.path[this.currentStage + 1].x
     const y = this.position.y - this.path[this.currentStage + 1].y
-
-    const radius = Math.atan2(y, x)
-
-    this.velocity.x = Math.cos(radius) * -this.moveSpeed
-    this.velocity.y = Math.sin(radius) * -this.moveSpeed
+    const radians = Math.atan2(y, x)
+    this.radians = radians + (-180 * Math.PI) / 180
+    this.velocity.x = Math.cos(radians) * -this.moveSpeed
+    this.velocity.y = Math.sin(radians) * -this.moveSpeed
   }
 
   calculateRound(num: number): boolean {
@@ -56,6 +59,7 @@ class Enemy {
   }
 
   update() {
+    this.collisionCircle()
     this.calculateVelocity()
     //  path długość ma 6, jak trafia na miejsce 6 to wetedy koniec
     if (this.calculateRound(5) && this.currentStage + 2 !== this.path.length) {
@@ -66,23 +70,18 @@ class Enemy {
 
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
-
-    this.draw()
   }
 
-  draw() {
-    this.c.fillStyle = 'red'
-    this.c.fillRect(this.position.x, this.position.y, this.size, this.size)
-    this.c.drawImage(
-      this.image,
+  collisionCircle() {
+    this.c.beginPath()
+    this.c.arc(
+      this.position.x + this.size / 2,
+      this.position.y + this.size / 2,
+      this.radius,
       0,
-      0,
-      this.image.width,
-      this.image.height,
-      this.position.x,
-      this.position.y,
-      this.image.width,
-      this.image.height
+      2 * Math.PI
     )
+    this.c.strokeStyle = this.color
+    this.c.stroke()
   }
 }

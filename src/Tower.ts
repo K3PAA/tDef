@@ -11,6 +11,8 @@ class Tower extends Sprite {
   public active: Boolean = true
   public sellFor: number
 
+  public radians = 0
+
   public totalDmg: number
   public bonusDmg = 0
   public basicDmg = 0
@@ -19,11 +21,12 @@ class Tower extends Sprite {
   public bonusAs = 0
   public basicAs = 0
 
-  public totalRange: number
+  public radius: number
   public bonusRange = 0
   public basicRange = 0
 
   public upgrades: Upgrade
+  public target: null | Enemy = null
 
   constructor(
     public canvas: HTMLCanvasElement,
@@ -39,14 +42,25 @@ class Tower extends Sprite {
 
     this.totalDmg = data.totalDmg
     this.totalAs = data.totalAs
-    this.totalRange = data.totalRange
+    this.radius = data.totalRange
 
     this.basicDmg = data.totalDmg
     this.basicAs = data.totalAs
     this.basicRange = data.totalRange
   }
 
-  update(): void {}
+  update() {
+    if (this.active) this.drawRange()
+    if (this.target) this.shootToTarget()
+  }
+  shootToTarget() {
+    if (!this.target) return
+    this.target.color = 'yellow'
+    const x = this.position.x - this.target.position.x
+    const y = this.position.y - this.target.position.y
+    const radians = Math.atan2(y, x)
+    this.radians = radians + (-180 * Math.PI) / 180
+  }
 
   upgrade(price: number, bonus: number, i: number, type: string) {
     this.updateCost(price)
@@ -94,7 +108,7 @@ class Tower extends Sprite {
 
   updateRange(bonusRange: number) {
     this.bonusRange += bonusRange
-    this.totalRange = this.bonusRange + this.basicRange
+    this.radius = this.bonusRange + this.basicRange
   }
 
   drawRange(): void {
@@ -103,7 +117,7 @@ class Tower extends Sprite {
       this.c.arc(
         this.position.x + this.size / 2,
         this.position.y + this.size / 2,
-        this.totalRange,
+        this.radius,
         0,
         2 * Math.PI
       )

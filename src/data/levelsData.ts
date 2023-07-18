@@ -21,19 +21,19 @@ const levels: Level[] = [
       {
         w1: {
           forNext: 1,
-          amount: 5,
+          amount: 2,
           lvl: 0,
           toWait: 0,
         },
         w2: {
           forNext: 1.5,
-          amount: 10,
+          amount: 3,
           lvl: 0,
           toWait: 5,
         },
         w3: {
           forNext: 1.5,
-          amount: 5,
+          amount: 3,
           lvl: 0,
           toWait: 10,
         },
