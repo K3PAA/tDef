@@ -14,19 +14,7 @@ class Game {
   // HTML towers
   towers: NodeListOf<HTMLImageElement>
   singleTowerInfo: TowerInfo
-  // HTML Show El
-  errorDisplay: HTMLElement
-
-  hearthDisplay: HTMLElement
-  moneyDisplay: HTMLElement
-  waveCurrentDisplay: HTMLElement
-  wavesAllDisplay: HTMLElement
-
-  // Game Data
-  hearthAmount: number
-  money: number
-  waveCurrent: number
-  waveAll: number
+  generalInfo: GeneralInfo
 
   // Game Background
   background: Sprite
@@ -36,14 +24,13 @@ class Game {
   // detect if player is above place that allows to build tower
   canBuild: Boolean = false
   mousePosition: Point = { x: 0, y: 0 }
-  errorInterval: number | undefined = undefined
 
   // To implement, will hold tower to push if to build info
   activeTower: Tower | null = null
 
   // Arrays that will contains enemies and towers when on screen
   towersData: TowerDetail[] = towersData
-
+  enemiesData: EnemyData[] = enemiesData
   towersArr: Tower[]
   enemiesArr: object[]
 
@@ -70,23 +57,14 @@ class Game {
       this.upgradeTower.bind(this)
     )
 
+    this.generalInfo = new GeneralInfo(
+      this.gameData,
+      this.level,
+      this.startRound.bind(this)
+    )
     this.towers = document.querySelectorAll('.turret')!
 
-    // General Game HTML and Values
-    this.hearthDisplay = document.getElementById('game-heart')!
-    this.hearthAmount = this.gameData[this.level].health
-
-    this.moneyDisplay = document.getElementById('game-money')!
-    this.money = this.gameData[this.level].money
-
-    this.waveCurrentDisplay = document.getElementById('game-wave-current')!
-    this.waveCurrent = 0
-
-    this.wavesAllDisplay = document.getElementById('game-wave-all')!
-    this.waveAll = this.gameData[this.level].waves.length
-
-    this.errorDisplay = document.querySelector('.error-info')!
-    this.renderBasicHTML()
+    this.generalInfo.renderBasicHTML()
 
     this.background = new Sprite(
       this.canvas,
@@ -103,31 +81,46 @@ class Game {
     this.canvas.addEventListener('dragleave', this.dropTurret.bind(this))
   }
 
+  createWave(path: Point[], enemy: any) {
+    const { amount, toWait, lvl, forNext } = enemy
+
+    setTimeout(() => {
+      for (let i = 0; i < amount; i++) {
+        setTimeout(() => {
+          console.log('t')
+          this.enemiesArr.push(this.selectEnemy(lvl, path))
+        }, i * forNext * 1000)
+      }
+    }, toWait * 1000)
+  }
+
+  startRound(waveNum: number, allWave: number) {
+    const wave = this.gameData[this.level].waves[waveNum]
+    const path = this.gameData[this.level].path
+
+    const entries = Object.entries(wave)
+    entries.forEach(([order, enemy]) => {
+      this.createWave(path, enemy)
+    })
+  }
+
+  selectEnemy(lvl: number, path: Point[]): Enemy | never {
+    switch (lvl) {
+      case 0:
+        return new Enemy(this.canvas, this.c, path, this.enemiesData[lvl])
+        break
+
+      default:
+        throw new Error('No valid')
+        break
+    }
+  }
+
   isPointInSquare(a: Point, b: Square): Boolean {
     if (a.x < b.x + b.size && a.x > b.x && a.y < b.y + b.size && a.y > b.y) {
       return true
     }
     return false
-  }
-
-  toggleError(text: string, duration: number) {
-    let time = duration / 6
-    let count = 0
-    this.errorDisplay.innerText = text
-
-    if (!this.errorInterval) {
-      this.errorInterval = setInterval(() => {
-        this.errorDisplay.classList.toggle('active')
-        count++
-        if (count * time === duration) {
-          if (this.errorDisplay.className.includes('active')) {
-            this.errorDisplay.classList.remove('active')
-          }
-          clearInterval(this.errorInterval)
-          this.errorInterval = undefined
-        }
-      }, time)
-    }
   }
 
   createError(errMsg: string): never {
@@ -179,9 +172,9 @@ class Game {
     if (
       this.canBuild &&
       this.activeTower &&
-      this.money - this.activeTower.cost >= 0
+      this.generalInfo.money - this.activeTower.cost >= 0
     ) {
-      this.updateMoney(this.activeTower.cost, 'substract')
+      this.generalInfo.updateMoney(this.activeTower.cost, 'substract')
       this.towersArr.push(this.activeTower)
 
       // if place is used then remove it from interactive positions
@@ -195,9 +188,9 @@ class Game {
     } else if (
       this.activeTower &&
       this.canBuild &&
-      this.money - this.activeTower.cost <= 0
+      this.generalInfo.money - this.activeTower.cost <= 0
     ) {
-      this.toggleError(`Not enough money`, 3500)
+      this.generalInfo.toggleError(`Not enough money`, 3500)
     }
     this.isDragging = false
     this.mousePosition = { x: 0, y: 0 }
@@ -235,7 +228,7 @@ class Game {
       return tower && this.activeTower && tower.id !== this.activeTower.id
     })
 
-    this.updateMoney(this.activeTower.sellFor, 'add')
+    this.generalInfo.updateMoney(this.activeTower.sellFor, 'add')
     this.singleTowerInfo.sell(this.activeTower)
     this.activeTower = null
   }
@@ -256,43 +249,18 @@ class Game {
     }
     if (!price || !bonus) return
 
-    if (this.money - price < 0) {
-      this.toggleError(`need ${Math.abs(this.money - price)}$`, 2500)
+    if (this.generalInfo.money - price < 0) {
+      this.generalInfo.toggleError(
+        `need ${Math.abs(this.generalInfo.money - price)}$`,
+        2500
+      )
       return
     }
 
-    this.updateMoney(price, 'substract')
+    this.generalInfo.updateMoney(price, 'substract')
     this.activeTower.upgrade(price, bonus, i, type)
 
     this.singleTowerInfo.updateBonus(this.activeTower, type)
-  }
-
-  renderBasicHTML() {
-    this.updateHealth()
-    this.updateMoney(0, 'add')
-    this.updateWave()
-    this.updateWaveAmount()
-  }
-
-  updateHealth(val: number = 0) {
-    this.hearthAmount -= val
-    this.hearthDisplay.textContent = `${this.hearthAmount}`
-  }
-
-  updateMoney(val: number = 0, type: 'add' | 'substract') {
-    if (type === 'add') this.money += val
-    if (type === 'substract') this.money -= val
-    this.moneyDisplay.textContent = `${this.money}`
-  }
-
-  updateWave(val: number = 0) {
-    this.waveCurrent += val
-    this.waveCurrentDisplay.textContent = `${this.waveCurrent}`
-  }
-
-  updateWaveAmount(val: number = 0) {
-    if (val) this.waveAll = val
-    this.wavesAllDisplay.textContent = `${this.waveAll}`
   }
 
   showTurretInfo(): void {
@@ -354,10 +322,20 @@ class Game {
     })
   }
 
+  drawEnemies() {
+    if (this.enemiesArr.length === 0) return
+
+    // type Enemy powinien być ale nie chce wejść
+    this.enemiesArr.forEach((enemy: any): void => {
+      enemy.update()
+    })
+  }
+
   animate(): void {
     requestAnimationFrame(this.animate.bind(this))
     this.background.draw()
     this.drawIfCanBuild()
+    this.drawEnemies()
     this.drawTowers()
   }
 }

@@ -4,11 +4,6 @@ type Square = {
   size: number
 }
 
-type Point = {
-  x: number
-  y: number
-}
-
 interface DataToConvert {
   data2D: number[][]
   interactivePositions: Square[]

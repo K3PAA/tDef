@@ -166,7 +166,6 @@ class TowerInfo {
   }
 
   show(tower: Tower): void {
-    console.log(tower.totalDmg)
     if (!tower) return
 
     this.updateBonus(tower, 'all')
