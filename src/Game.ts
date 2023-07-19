@@ -54,7 +54,8 @@ class Game {
     this.singleTowerInfo = new TowerInfo(
       this.towersNotInFocus.bind(this),
       this.deleteTower.bind(this),
-      this.upgradeTower.bind(this)
+      this.upgradeTower.bind(this),
+      this.closeTowerInfo.bind(this)
     )
 
     this.generalInfo = new GeneralInfo(
@@ -87,11 +88,31 @@ class Game {
     setTimeout(() => {
       for (let i = 0; i < amount; i++) {
         setTimeout(() => {
-          console.log('t')
           this.enemiesArr.push(this.selectEnemy(lvl, path))
         }, i * forNext * 1000)
       }
     }, toWait * 1000)
+  }
+
+  eliminatePlayer(a: Enemy) {
+    this.enemiesArr = this.enemiesArr.filter((enemy) => {
+      return (
+        Math.floor(a.position.x) !== Math.floor(enemy.position.x) &&
+        Math.floor(a.position.y) !== Math.floor(enemy.position.y)
+      )
+    })
+
+    this.towersArr.forEach((tower: Tower) => {
+      if (
+        tower.target &&
+        Math.floor(tower.target.position.x) === Math.floor(a.position.x) &&
+        Math.floor(tower.target.position.y) === Math.floor(a.position.y)
+      ) {
+        tower.target = null
+      }
+    })
+
+    this.generalInfo.updateMoney(a.reward, 'add')
   }
 
   startRound(waveNum: number, allWave: number) {
@@ -105,15 +126,19 @@ class Game {
   }
 
   selectEnemy(lvl: number, path: Point[]): Enemy | never {
-    switch (lvl) {
-      case 0:
-        return new Enemy(this.canvas, this.c, path, this.enemiesData[lvl])
-        break
+    if (!path || !lvl) this.createError('Something went wrong')
 
-      default:
-        throw new Error('No valid')
-        break
+    const createEnemy = (path: Point[], lvl: number) => {
+      return new Enemy(
+        this.canvas,
+        this.c,
+        path,
+        this.enemiesData[lvl],
+        this.eliminatePlayer.bind(this)
+      )
     }
+
+    return createEnemy(path, lvl)
   }
 
   isPointInSquare(a: Point, b: Square): Boolean {
@@ -285,35 +310,75 @@ class Game {
     }
     switch (name) {
       case 'speed':
-        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[0]))
+        return new Tower(
+          this.canvas,
+          this.c,
+          fakeDeepCopy(towersData[0]),
+          this.checkCircleCollision
+        )
         break
 
       case 'burn':
-        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[1]))
+        return new Tower(
+          this.canvas,
+          this.c,
+          fakeDeepCopy(towersData[1]),
+          this.checkCircleCollision
+        )
         break
 
       case 'freeze':
-        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[2]))
+        return new Tower(
+          this.canvas,
+          this.c,
+          fakeDeepCopy(towersData[2]),
+          this.checkCircleCollision
+        )
         break
 
       case 'laser':
-        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[3]))
+        return new Tower(
+          this.canvas,
+          this.c,
+          fakeDeepCopy(towersData[3]),
+          this.checkCircleCollision
+        )
         break
 
       case 'thunder':
-        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[4]))
+        return new Tower(
+          this.canvas,
+          this.c,
+          fakeDeepCopy(towersData[4]),
+          this.checkCircleCollision
+        )
         break
 
       case 'bubble':
-        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[5]))
+        return new Tower(
+          this.canvas,
+          this.c,
+          fakeDeepCopy(towersData[5]),
+          this.checkCircleCollision
+        )
         break
 
       case 'rocket':
-        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[6]))
+        return new Tower(
+          this.canvas,
+          this.c,
+          fakeDeepCopy(towersData[6]),
+          this.checkCircleCollision
+        )
         break
 
       case 'metal':
-        return new Tower(this.canvas, this.c, fakeDeepCopy(towersData[7]))
+        return new Tower(
+          this.canvas,
+          this.c,
+          fakeDeepCopy(towersData[7]),
+          this.checkCircleCollision
+        )
         break
       default:
         this.createError(`Tower ${name} does not match any tower name`)
@@ -347,6 +412,8 @@ class Game {
         if (!this.checkCircleCollision(centerTowerPos, tower.target)) {
           tower.target.color = 'red'
           tower.target = null
+          clearInterval(tower.isShooting)
+          tower.isShooting = undefined
         }
       }
       tower.update()

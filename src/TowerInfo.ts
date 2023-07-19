@@ -24,7 +24,8 @@ class TowerInfo {
   constructor(
     public towersNotInFocus: () => void,
     public deleteTower: () => void,
-    public upgradeTower: (i: number, type: string) => void
+    public upgradeTower: (i: number, type: string) => void,
+    public closeTowerInfo: () => void
   ) {
     this.turretsDisplay = document.querySelector('.turrets-display')!
     this.turretInfo = document.querySelector('.turret-open')!
@@ -46,7 +47,7 @@ class TowerInfo {
     this.rangeListButtons = null
     this.setupList()
 
-    this.closeInfoBtn.addEventListener('click', this.deleteTower.bind(this))
+    this.closeInfoBtn.addEventListener('click', this.closeTowerInfo)
     this.sellBtn.addEventListener('click', this.deleteTower.bind(this))
   }
 
@@ -158,8 +159,11 @@ class TowerInfo {
       this.bonusAs.textContent = `${tower.bonusAs}`
       this.bonusRange.textContent = `${tower.bonusRange}`
     } else if (type === 'dmg') this.bonusDmg.textContent = `${tower.bonusDmg}`
-    else if (type === 'as') this.bonusAs.textContent = `${tower.bonusAs}`
-    else if (type === 'range') {
+    else if (type === 'as') {
+      this.bonusAs.textContent = `${tower.bonusAs}`
+      //  need to reset tower shooting interval so it have as applied to it
+      tower.isShooting = undefined
+    } else if (type === 'range') {
       this.bonusRange.textContent = `${tower.bonusRange}`
     }
     this.updateDeletePrice(tower.sellFor)

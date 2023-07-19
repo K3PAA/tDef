@@ -15,9 +15,30 @@ interface Level {
 const levels: Level[] = [
   {
     health: 15,
-    money: 210,
+    money: 130,
     background: '../assets/Levels/level1/level-1.png',
     waves: [
+      {
+        w1: {
+          forNext: 1,
+          amount: 1,
+          lvl: 3,
+          toWait: 0,
+        },
+        // w2: {
+        //   forNext: 1.5,
+        //   amount: 1,
+        //   lvl: 3,
+        //   toWait: 5,
+        // },
+        // w3: {
+        //   forNext: 1.5,
+        //   amount: 3,
+        //   lvl: 1,
+        //   // need to be more then the previos time
+        //   toWait: 10,
+        // },
+      },
       {
         w1: {
           forNext: 1,
@@ -38,7 +59,6 @@ const levels: Level[] = [
           toWait: 10,
         },
       },
-      {},
       {},
       {},
       {},
@@ -69,7 +89,7 @@ const levels: Level[] = [
     path: [
       {
         x: -132,
-        y: 134,
+        y: 142,
       },
       {
         x: 234,
@@ -84,12 +104,12 @@ const levels: Level[] = [
         y: 320,
       },
       {
-        x: 769,
-        y: 105,
+        x: 770,
+        y: 110,
       },
       {
-        x: 1117,
-        y: 109,
+        x: 1120,
+        y: 110,
       },
     ],
   },

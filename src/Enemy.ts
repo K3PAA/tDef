@@ -10,14 +10,15 @@ class Enemy extends Sprite {
   public position: Point = { x: 0, y: 0 }
   public velocity: Point = { x: 0, y: 0 }
   public currentStage: number = 0
-
+  public importance: number = 1
   public radius: number
 
   constructor(
     public canvas: HTMLCanvasElement,
     public c: CanvasRenderingContext2D,
     public path: Point[],
-    public data: EnemyData
+    public data: EnemyData,
+    public eliminatePlayer: (a: Enemy) => void
   ) {
     super(canvas, c, data.src)
     this.health = data.health
@@ -25,7 +26,7 @@ class Enemy extends Sprite {
     this.moveSpeed = data.moveSpeed
     this.src = data.src
     this.size = data.size
-
+    this.importance = data.importance
     this.position.x = this.path[this.currentStage].x
     this.position.y = this.path[this.currentStage].y
     this.radius = this.size / 2
@@ -45,6 +46,7 @@ class Enemy extends Sprite {
       x: this.path[this.currentStage + 1].x,
       y: this.path[this.currentStage + 1].y,
     }
+
     // now player position can be in a set of range and the condiction will be true
     // instead of matching position when pixels are exactly the same
     if (
@@ -58,15 +60,26 @@ class Enemy extends Sprite {
     return false
   }
 
+  checkIfDead() {
+    if (this.health <= 0) {
+      this.eliminatePlayer(this)
+    }
+  }
+
   update() {
     this.collisionCircle()
-    this.calculateVelocity()
+    this.checkIfDead()
     //  path długość ma 6, jak trafia na miejsce 6 to wetedy koniec
-    if (this.calculateRound(5) && this.currentStage + 2 !== this.path.length) {
+
+    if (this.calculateRound(6) && this.currentStage + 1 !== this.path.length) {
       this.currentStage += 1
-    } else if (this.currentStage + 2 === this.path.length) {
+      // console.log(this.currentStage, this.path.length - 1)
+    } else if (this.currentStage + 1 === this.path.length) {
       // delete player from array
+      console.log('delete player')
     }
+
+    this.calculateVelocity()
 
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y

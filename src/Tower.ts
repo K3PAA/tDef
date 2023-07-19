@@ -27,11 +27,15 @@ class Tower extends Sprite {
 
   public upgrades: Upgrade
   public target: null | Enemy = null
+  public isShooting: number | undefined = undefined
+  public bullets: Bullet[] = []
+  public centerPosition: Point = { x: 0, y: 0 }
 
   constructor(
     public canvas: HTMLCanvasElement,
     public c: CanvasRenderingContext2D,
-    public data: TowerDetail
+    public data: TowerDetail,
+    public checkCircleCollision: (a: Enemy, b: Bullet) => Boolean
   ) {
     super(canvas, c, data.src, data.position)
     this.id = ++Tower.count
@@ -52,6 +56,20 @@ class Tower extends Sprite {
   update() {
     if (this.active) this.drawRange()
     if (this.target) this.shootToTarget()
+    if (this.bullets) this.drawBullets()
+  }
+  drawBullets() {
+    this.bullets.forEach((bullet: Bullet) => {
+      bullet.update()
+    })
+  }
+  deleteBullet(a: Bullet) {
+    this.bullets = this.bullets.filter((bullet: Bullet) => {
+      return (
+        Math.floor(a.position.x) !== Math.floor(bullet.position.x) &&
+        Math.floor(a.position.y) !== Math.floor(bullet.position.y)
+      )
+    })
   }
   shootToTarget() {
     if (!this.target) return
@@ -60,6 +78,28 @@ class Tower extends Sprite {
     const y = this.position.y - this.target.position.y
     const radians = Math.atan2(y, x)
     this.radians = radians + (-180 * Math.PI) / 180
+    if (!this.isShooting) {
+      this.isShooting = setInterval(() => {
+        if (!this.target) return
+
+        this.centerPosition = {
+          x: this.position.x + this.image.width / 2 + this.offset.x,
+          y: this.position.y + this.image.height / 2 + this.offset.y,
+        }
+
+        this.bullets.push(
+          new Bullet(
+            this.centerPosition,
+            this.target,
+            this.canvas,
+            this.c,
+            this.checkCircleCollision,
+            this.deleteBullet.bind(this),
+            this.totalDmg
+          )
+        )
+      }, 1000 - this.totalAs * 100)
+    }
   }
 
   upgrade(price: number, bonus: number, i: number, type: string) {
