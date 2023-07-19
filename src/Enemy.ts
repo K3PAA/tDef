@@ -1,8 +1,13 @@
 class Enemy extends Sprite {
+  static count: number = 0
+  public id = 0
+
   public health: number
+  public healthTotal: number
   public reward: number
   public moveSpeed: number
 
+  public healthBarWidth = 20
   public radians = 0
   public color: string = 'red'
   public src: string
@@ -18,10 +23,13 @@ class Enemy extends Sprite {
     public c: CanvasRenderingContext2D,
     public path: Point[],
     public data: EnemyData,
-    public eliminatePlayer: (a: Enemy) => void
+    public eliminatePlayer: (a: Enemy) => void,
+    public enemyInBase: (a: Enemy) => void
   ) {
     super(canvas, c, data.src)
+    this.id = ++Tower.count
     this.health = data.health
+    this.healthTotal = data.health
     this.reward = data.reward
     this.moveSpeed = data.moveSpeed
     this.src = data.src
@@ -50,10 +58,10 @@ class Enemy extends Sprite {
     // now player position can be in a set of range and the condiction will be true
     // instead of matching position when pixels are exactly the same
     if (
-      Math.round(this.position.x) >= destination.x - num &&
-      Math.round(this.position.x) <= destination.x &&
-      Math.round(this.position.y) >= destination.y - num &&
-      Math.round(this.position.y) <= destination.y
+      Math.round(this.position.x) >= Math.round(destination.x - num) &&
+      Math.round(this.position.x) <= Math.round(destination.x) &&
+      Math.round(this.position.y) >= Math.round(destination.y - num) &&
+      Math.round(this.position.y) <= Math.round(destination.y)
     ) {
       return true
     }
@@ -66,20 +74,40 @@ class Enemy extends Sprite {
     }
   }
 
-  update() {
-    this.collisionCircle()
-    this.checkIfDead()
-    //  path długość ma 6, jak trafia na miejsce 6 to wetedy koniec
+  drawHealthBar() {
+    this.c.fillStyle = 'red'
+    this.c.fillRect(
+      this.position.x + this.size / 4,
+      this.position.y,
+      this.healthBarWidth,
+      5
+    )
 
+    this.c.fillStyle = 'green'
+    this.c.fillRect(
+      this.position.x + this.size / 4,
+      this.position.y,
+      this.healthBarWidth -
+        ((this.healthTotal - this.health) * this.healthBarWidth) /
+          this.healthTotal,
+      5
+    )
+  }
+
+  update() {
+    this.calculateVelocity()
+    this.collisionCircle()
+    this.drawHealthBar()
+    this.checkIfDead()
+
+    //  path długość ma 6, jak trafia na miejsce 6 to wetedy koniec
     if (this.calculateRound(6) && this.currentStage + 1 !== this.path.length) {
       this.currentStage += 1
-      // console.log(this.currentStage, this.path.length - 1)
-    } else if (this.currentStage + 1 === this.path.length) {
-      // delete player from array
-      console.log('delete player')
     }
 
-    this.calculateVelocity()
+    if (this.currentStage + 1 === this.path.length) {
+      this.enemyInBase(this)
+    }
 
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y

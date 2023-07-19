@@ -93,6 +93,7 @@ class Tower extends Sprite {
             this.target,
             this.canvas,
             this.c,
+            '../assets/Bullets/texting.png',
             this.checkCircleCollision,
             this.deleteBullet.bind(this),
             this.totalDmg

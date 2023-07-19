@@ -1,4 +1,4 @@
-class Bullet {
+class Bullet extends Sprite {
   public velocity: Point = { x: 0, y: 0 }
   public position: Point = { x: 0, y: 0 }
   public radius = 10
@@ -11,14 +11,16 @@ class Bullet {
     public enemy: Enemy,
     public canvas: HTMLCanvasElement,
     public c: CanvasRenderingContext2D,
+    public src: string,
     public checkCircleCollision: (a: Enemy, b: Bullet) => Boolean,
     public deleteBullet: (a: Bullet) => void,
     public dmg: number
   ) {
+    super(canvas, c, src)
     this.position = JSON.parse(JSON.stringify(playerPos))
   }
 
-  draw() {
+  drawOutline() {
     this.c.beginPath()
     this.c.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI)
     this.c.strokeStyle = this.color
@@ -45,6 +47,6 @@ class Bullet {
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
 
-    this.draw()
+    this.drawOutline()
   }
 }

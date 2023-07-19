@@ -35,7 +35,10 @@ class GeneralInfo {
     this.startBtn = document.getElementById('start-round')!
 
     this.startBtn.addEventListener('click', () => {
-      startRound(this.waveCurrent, this.waveAll)
+      if (!this.startBtn.className.includes('active')) {
+        this.startBtn.classList.add('active')
+        startRound(this.waveCurrent, this.waveAll)
+      }
     })
   }
 
@@ -61,17 +64,18 @@ class GeneralInfo {
 
   renderBasicHTML() {
     this.updateHealth()
-    this.updateMoney(0, 'add')
+    this.updateMoney()
     this.updateWave()
     this.updateWaveAmount()
   }
 
-  updateHealth(val: number = 0) {
-    this.hearthAmount -= val
+  updateHealth(val: number = 0, type: 'add' | 'substract' = 'substract') {
+    if (type === 'add') this.hearthAmount += val
+    if (type === 'substract') this.hearthAmount -= val
     this.hearthDisplay.textContent = `${this.hearthAmount}`
   }
 
-  updateMoney(val: number = 0, type: 'add' | 'substract') {
+  updateMoney(val: number = 0, type: 'add' | 'substract' = 'add') {
     if (type === 'add') this.money += val
     if (type === 'substract') this.money -= val
     this.moneyDisplay.textContent = `${this.money}`

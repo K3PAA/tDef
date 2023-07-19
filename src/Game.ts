@@ -34,6 +34,8 @@ class Game {
   towersArr: Tower[]
   enemiesArr: Enemy[]
 
+  waveAboutEnd: Boolean = false
+
   constructor(public level: number = 0) {
     this.canvas = document.querySelector('canvas')!
     this.canvas.width = this.dimensions.x * this.tileSize
@@ -82,25 +84,31 @@ class Game {
     this.canvas.addEventListener('dragleave', this.dropTurret.bind(this))
   }
 
-  createWave(path: Point[], enemy: any) {
-    const { amount, toWait, lvl, forNext } = enemy
+  createWave(path: Point[], enemies: any) {
+    enemies.forEach((enemy: any) => {
+      const { amount, toWait, lvl, next, last } = enemy
+      setTimeout(() => {
+        for (let i = 0; i < amount; i++) {
+          setTimeout(() => {
+            this.enemiesArr.push(this.selectEnemy(lvl, path))
+            if (last) this.waveAboutEnd = true
+          }, i * next * 1000)
+        }
+      }, toWait * 1000)
+    })
+  }
 
-    setTimeout(() => {
-      for (let i = 0; i < amount; i++) {
-        setTimeout(() => {
-          this.enemiesArr.push(this.selectEnemy(lvl, path))
-        }, i * forNext * 1000)
-      }
-    }, toWait * 1000)
+  startRound(waveNum: number, allWave: number) {
+    const wave = this.gameData[this.level].waves[waveNum]
+    const path = this.gameData[this.level].path
+
+    Object.values(wave).forEach((wave) => {
+      this.createWave(path, wave.enemies)
+    })
   }
 
   eliminatePlayer(a: Enemy) {
-    this.enemiesArr = this.enemiesArr.filter((enemy) => {
-      return (
-        Math.floor(a.position.x) !== Math.floor(enemy.position.x) &&
-        Math.floor(a.position.y) !== Math.floor(enemy.position.y)
-      )
-    })
+    this.enemiesArr = this.enemiesArr.filter((enemy) => enemy.id !== a.id)
 
     this.towersArr.forEach((tower: Tower) => {
       if (
@@ -115,30 +123,25 @@ class Game {
     this.generalInfo.updateMoney(a.reward, 'add')
   }
 
-  startRound(waveNum: number, allWave: number) {
-    const wave = this.gameData[this.level].waves[waveNum]
-    const path = this.gameData[this.level].path
+  enemyInBase(a: Enemy) {
+    this.generalInfo.updateHealth(a.importance)
+    this.enemiesArr = this.enemiesArr.filter((enemy) => enemy.id !== a.id)
 
-    const entries = Object.entries(wave)
-    entries.forEach(([order, enemy]) => {
-      this.createWave(path, enemy)
-    })
+    if (this.generalInfo.hearthAmount <= 0) console.log('game lost')
   }
 
   selectEnemy(lvl: number, path: Point[]): Enemy | never {
-    if (!path || !lvl) this.createError('Something went wrong')
-
-    const createEnemy = (path: Point[], lvl: number) => {
+    if (path && (lvl || lvl === 0)) {
       return new Enemy(
         this.canvas,
         this.c,
         path,
         this.enemiesData[lvl],
-        this.eliminatePlayer.bind(this)
+        this.eliminatePlayer.bind(this),
+        this.enemyInBase.bind(this)
       )
     }
-
-    return createEnemy(path, lvl)
+    return this.createError('no lvl or path mesage')
   }
 
   isPointInSquare(a: Point, b: Square): Boolean {
@@ -427,11 +430,21 @@ class Game {
     })
   }
 
+  setUpNextRound() {
+    this.waveAboutEnd = false
+    this.generalInfo.startBtn.classList.remove('active')
+    this.generalInfo.updateWave(1)
+  }
+
   animate(): void {
     requestAnimationFrame(this.animate.bind(this))
     this.background.draw()
     this.drawIfCanBuild()
     this.drawEnemies()
     this.drawTowers()
+
+    if (this.waveAboutEnd) {
+      if (this.enemiesArr.length === 0) this.setUpNextRound()
+    }
   }
 }
