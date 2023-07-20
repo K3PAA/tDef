@@ -100,8 +100,8 @@ class Enemy extends Sprite {
     this.drawHealthBar()
     this.checkIfDead()
 
-    //  path długość ma 6, jak trafia na miejsce 6 to wetedy koniec
-    if (this.calculateRound(6) && this.currentStage + 1 !== this.path.length) {
+    // not working correctly :<(
+    if (this.calculateRound(4) && this.currentStage + 1 !== this.path.length) {
       this.currentStage += 1
     }
 

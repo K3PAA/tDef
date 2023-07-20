@@ -85,8 +85,8 @@ class Game {
   }
 
   createWave(path: Point[], enemies: any) {
-    enemies.forEach((enemy: any) => {
-      const { amount, toWait, lvl, next, last } = enemy
+    enemies.enemies.forEach((enemy: any) => {
+      const { amount, start, lvl, next, last, wave } = enemy
       setTimeout(() => {
         for (let i = 0; i < amount; i++) {
           setTimeout(() => {
@@ -94,30 +94,23 @@ class Game {
             if (last) this.waveAboutEnd = true
           }, i * next * 1000)
         }
-      }, toWait * 1000)
+      }, start * 1000 + wave * 5000)
     })
   }
 
   startRound(waveNum: number, allWave: number) {
-    const wave = this.gameData[this.level].waves[waveNum]
+    const enemies = this.gameData[this.level].waves[waveNum]
     const path = this.gameData[this.level].path
 
-    Object.values(wave).forEach((wave) => {
-      this.createWave(path, wave.enemies)
-    })
+    this.createWave(path, enemies)
+    this.generalInfo.updateWave(1)
   }
 
   eliminatePlayer(a: Enemy) {
     this.enemiesArr = this.enemiesArr.filter((enemy) => enemy.id !== a.id)
 
     this.towersArr.forEach((tower: Tower) => {
-      if (
-        tower.target &&
-        Math.floor(tower.target.position.x) === Math.floor(a.position.x) &&
-        Math.floor(tower.target.position.y) === Math.floor(a.position.y)
-      ) {
-        tower.target = null
-      }
+      if (tower.target && tower.target.id === a.id) tower.target = null
     })
 
     this.generalInfo.updateMoney(a.reward, 'add')
@@ -308,85 +301,58 @@ class Game {
 
   selectTower(name: string): Tower {
     // otherwise turrets with same type will inherit upgrade stats one from another
-    let fakeDeepCopy = (x: TowerDetail) => {
+    const fakeDeepCopy = (x: TowerDetail) => {
       return { ...JSON.parse(JSON.stringify(x)) }
     }
+
+    const createTower = (num: number): Tower => {
+      return new Tower(
+        this.canvas,
+        this.c,
+        fakeDeepCopy(towersData[num]),
+        this.checkCircleCollision
+      )
+    }
+
+    let tower: Tower
     switch (name) {
       case 'speed':
-        return new Tower(
-          this.canvas,
-          this.c,
-          fakeDeepCopy(towersData[0]),
-          this.checkCircleCollision
-        )
+        tower = createTower(0)
         break
 
       case 'burn':
-        return new Tower(
-          this.canvas,
-          this.c,
-          fakeDeepCopy(towersData[1]),
-          this.checkCircleCollision
-        )
+        tower = createTower(1)
         break
 
       case 'freeze':
-        return new Tower(
-          this.canvas,
-          this.c,
-          fakeDeepCopy(towersData[2]),
-          this.checkCircleCollision
-        )
+        tower = createTower(2)
         break
 
       case 'laser':
-        return new Tower(
-          this.canvas,
-          this.c,
-          fakeDeepCopy(towersData[3]),
-          this.checkCircleCollision
-        )
+        tower = createTower(3)
         break
 
       case 'thunder':
-        return new Tower(
-          this.canvas,
-          this.c,
-          fakeDeepCopy(towersData[4]),
-          this.checkCircleCollision
-        )
+        tower = createTower(4)
         break
 
       case 'bubble':
-        return new Tower(
-          this.canvas,
-          this.c,
-          fakeDeepCopy(towersData[5]),
-          this.checkCircleCollision
-        )
+        tower = createTower(5)
         break
 
       case 'rocket':
-        return new Tower(
-          this.canvas,
-          this.c,
-          fakeDeepCopy(towersData[6]),
-          this.checkCircleCollision
-        )
+        tower = createTower(6)
         break
 
       case 'metal':
-        return new Tower(
-          this.canvas,
-          this.c,
-          fakeDeepCopy(towersData[7]),
-          this.checkCircleCollision
-        )
+        tower = createTower(7)
         break
       default:
         this.createError(`Tower ${name} does not match any tower name`)
         break
     }
+
+    return tower
   }
 
   drawInteractivePlace(pos: Square): void {
@@ -406,9 +372,20 @@ class Game {
       }
       if (!tower.target) {
         for (const enemy of this.enemiesArr) {
-          if (this.checkCircleCollision(centerTowerPos, enemy)) {
+          if (
+            enemy.moveSpeed > 1 &&
+            this.checkCircleCollision(centerTowerPos, enemy)
+          ) {
             tower.target = enemy
             break
+          }
+        }
+        if (!tower.target) {
+          for (const enemy of this.enemiesArr) {
+            if (this.checkCircleCollision(centerTowerPos, enemy)) {
+              tower.target = enemy
+              break
+            }
           }
         }
       } else {
@@ -431,9 +408,11 @@ class Game {
   }
 
   setUpNextRound() {
+    if (this.generalInfo.waveCurrent === this.generalInfo.waveAll) {
+      console.log(`Victory `)
+    }
     this.waveAboutEnd = false
     this.generalInfo.startBtn.classList.remove('active')
-    this.generalInfo.updateWave(1)
   }
 
   animate(): void {
