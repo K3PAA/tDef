@@ -1,22 +1,30 @@
 class Bullet extends Sprite {
+  static count: number = 0
+  public id = 0
+
   public velocity: Point = { x: 0, y: 0 }
   public position: Point = { x: 0, y: 0 }
   public radius = 10
+  public explosionRadius = 70
   public color: string = 'red'
   public radians = 0
   public moveSpeed = 10
 
   constructor(
+    public tower: Tower,
     public playerPos: Point,
     public enemy: Enemy,
     public canvas: HTMLCanvasElement,
     public c: CanvasRenderingContext2D,
     public src: string,
+    public multiAttack: string,
     public checkCircleCollision: (a: Enemy, b: Bullet) => Boolean,
     public deleteBullet: (a: Bullet) => void,
+    public handleMultiAttack: (a: Enemy, b: Bullet, c: Tower) => void,
     public dmg: number
   ) {
     super(canvas, c, src)
+    this.id = ++Tower.count
     this.position = JSON.parse(JSON.stringify(playerPos))
   }
 
@@ -40,6 +48,10 @@ class Bullet extends Sprite {
     this.calculateVelocity()
 
     if (this.checkCircleCollision(this.enemy, this)) {
+      if (this.multiAttack === 'rocket' || this.multiAttack === 'bubble') {
+        this.handleMultiAttack(this.enemy, this, this.tower)
+      }
+
       this.enemy.health -= this.dmg
       this.deleteBullet(this)
     }

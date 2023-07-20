@@ -1,3 +1,7 @@
+type PointAndRadius = {
+  position: Point
+  radius: number
+}
 class Game {
   // Game tile size
   protected readonly tileSize = 32
@@ -305,12 +309,14 @@ class Game {
       return { ...JSON.parse(JSON.stringify(x)) }
     }
 
-    const createTower = (num: number): Tower => {
+    const createTower = (num: number, multiAttack: string = 'none'): Tower => {
       return new Tower(
         this.canvas,
         this.c,
         fakeDeepCopy(towersData[num]),
-        this.checkCircleCollision
+        multiAttack,
+        this.checkCircleCollision,
+        this.handleMultiAttack.bind(this)
       )
     }
 
@@ -333,11 +339,11 @@ class Game {
         break
 
       case 'thunder':
-        tower = createTower(4)
+        tower = createTower(4, 'bubble')
         break
 
       case 'bubble':
-        tower = createTower(5)
+        tower = createTower(5, 'rocket')
         break
 
       case 'rocket':
@@ -370,7 +376,19 @@ class Game {
           y: tower.position.y + tower.offset.y,
         },
       }
-      if (!tower.target) {
+      if (
+        (!tower.target && tower.multiAttack === 'rocket') ||
+        (!tower.target && tower.multiAttack === 'bubble')
+      ) {
+        let avaliableEnemies: Enemy[] = []
+        for (const enemy of this.enemiesArr) {
+          if (this.checkCircleCollision(centerTowerPos, enemy)) {
+            avaliableEnemies.push(enemy)
+          }
+        }
+
+        tower.target = avaliableEnemies[Math.floor(avaliableEnemies.length / 2)]
+      } else if (!tower.target) {
         for (const enemy of this.enemiesArr) {
           if (
             enemy.moveSpeed > 1 &&
@@ -404,6 +422,56 @@ class Game {
     this.enemiesArr.forEach((enemy) => {
       enemy.update()
       enemy.draw()
+    })
+  }
+
+  handleMultiAttack(a: Enemy, b: Bullet, c: Tower) {
+    const { id, position } = a
+    const { multiAttack: name, explosionRadius: radius, dmg } = b
+
+    if (name === 'rocket') this.explosion({ position, radius }, dmg)
+    else if (name === 'bubble') this.bubble(position, id, dmg, c)
+  }
+
+  explosion(a: PointAndRadius, dmg: number) {
+    this.enemiesArr.forEach((enemy) => {
+      if (this.checkCircleCollision(enemy, a)) {
+        enemy.health -= dmg / 2
+      }
+    })
+  }
+  bubble(position: Point, id: number, dmg: number, c: Tower) {
+    const amount = 5
+
+    const enemiesToFollowArray = this.enemiesArr.filter((enemy) => {
+      return (
+        enemy.position.x - 100 < position.x &&
+        enemy.position.x + 100 > position.x &&
+        enemy.position.y - 100 < position.y &&
+        enemy.position.y + 100 > position.y &&
+        enemy.id !== id
+      )
+    })
+    console.log(enemiesToFollowArray)
+
+    enemiesToFollowArray.filter((enemy, i) => {
+      if (i < amount) {
+        c.bullets.push(
+          new Bullet(
+            c,
+            position,
+            enemy,
+            this.canvas,
+            this.c,
+            '../assets/Bullets/texting.png',
+            'none',
+            this.checkCircleCollision,
+            c.deleteBullet.bind(c),
+            this.handleMultiAttack,
+            dmg + (i + 3) * 2
+          )
+        )
+      }
     })
   }
 

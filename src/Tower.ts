@@ -35,7 +35,9 @@ class Tower extends Sprite {
     public canvas: HTMLCanvasElement,
     public c: CanvasRenderingContext2D,
     public data: TowerDetail,
-    public checkCircleCollision: (a: Enemy, b: Bullet) => Boolean
+    public multiAttack: string,
+    public checkCircleCollision: (a: Enemy, b: Bullet) => Boolean,
+    public handleMultiAttack: (a: Enemy, b: Bullet, c: Tower) => void
   ) {
     super(canvas, c, data.src, data.position)
     this.id = ++Tower.count
@@ -54,8 +56,9 @@ class Tower extends Sprite {
   }
 
   update() {
-    if (this.active) this.drawRange()
     if (this.target) this.shootToTarget()
+
+    if (this.active) this.drawRange()
     if (this.bullets) this.drawBullets()
   }
   drawBullets() {
@@ -65,12 +68,10 @@ class Tower extends Sprite {
   }
   deleteBullet(a: Bullet) {
     this.bullets = this.bullets.filter((bullet: Bullet) => {
-      return (
-        Math.floor(a.position.x) !== Math.floor(bullet.position.x) &&
-        Math.floor(a.position.y) !== Math.floor(bullet.position.y)
-      )
+      return bullet.id !== a.id
     })
   }
+
   shootToTarget() {
     if (!this.target) return
     this.target.color = 'yellow'
@@ -78,6 +79,7 @@ class Tower extends Sprite {
     const y = this.position.y - this.target.position.y
     const radians = Math.atan2(y, x)
     this.radians = radians + (-180 * Math.PI) / 180
+
     if (!this.isShooting) {
       this.isShooting = setInterval(() => {
         if (!this.target) return
@@ -89,13 +91,16 @@ class Tower extends Sprite {
 
         this.bullets.push(
           new Bullet(
+            this,
             this.centerPosition,
             this.target,
             this.canvas,
             this.c,
             '../assets/Bullets/texting.png',
+            this.multiAttack,
             this.checkCircleCollision,
             this.deleteBullet.bind(this),
+            this.handleMultiAttack,
             this.totalDmg
           )
         )

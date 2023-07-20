@@ -100,7 +100,6 @@ class Enemy extends Sprite {
     this.drawHealthBar()
     this.checkIfDead()
 
-    // not working correctly :<(
     if (this.calculateRound(4) && this.currentStage + 1 !== this.path.length) {
       this.currentStage += 1
     }
