@@ -6,6 +6,8 @@ class Enemy extends Sprite {
   public healthTotal: number
   public reward: number
   public moveSpeed: number
+  // if enemy clicked and info is shown set as true
+  public displayed: boolean = false
 
   public healthBarWidth = 20
   public radians = 0

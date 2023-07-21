@@ -21,7 +21,8 @@ class Bullet extends Sprite {
     public checkCircleCollision: (a: Enemy, b: Bullet) => Boolean,
     public deleteBullet: (a: Bullet) => void,
     public handleMultiAttack: (a: Enemy, b: Bullet, c: Tower) => void,
-    public dmg: number
+    public dmg: number,
+    public updateTotalDmg: (a: Tower) => void
   ) {
     super(canvas, c, src)
     this.id = ++Tower.count
@@ -52,6 +53,8 @@ class Bullet extends Sprite {
         this.handleMultiAttack(this.enemy, this, this.tower)
       }
 
+      this.tower.dmgDealt += this.dmg
+      this.updateTotalDmg(this.tower)
       this.enemy.health -= this.dmg
       this.deleteBullet(this)
     }

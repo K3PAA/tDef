@@ -81,6 +81,33 @@ svg {
   }
 }
 
+.canvas-wrapper {
+  position: relative;
+  height: 580px;
+}
+.enemy-info.active {
+  display: flex;
+}
+.enemy-info {
+  display: none;
+  position: absolute;
+
+  left: 0;
+  width: 350px;
+  height: 80px;
+
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: rgb(255, 168, 168);
+  pointer-events: none;
+}
+
+.enemy-info p {
+  font-size: 1.25rem;
+}
 .game {
   display: flex;
   top: 50px;
@@ -184,6 +211,10 @@ svg {
   display: none;
 }
 
+.turret {
+  cursor: pointer;
+}
+
 .turrets-display.active {
   display: block;
 }
@@ -239,6 +270,10 @@ svg {
   flex-direction: column;
 }
 
+.general__image {
+  pointer-events: none;
+}
+
 .general__name {
   font-size: 1.25rem;
 }
@@ -291,6 +326,7 @@ svg {
   color: var(--clr-dark);
   background-color: var(--clr-disable);
   padding: 5px 2px;
+  width: 100%;
   border: 0;
 }
 
@@ -305,6 +341,12 @@ svg {
 .upgrade-list__info {
   font-size: 1.5rem;
   color: var(--clr-dark);
+}
+
+.enemy-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .turret--active-close {

@@ -13,6 +13,13 @@ class GeneralInfo {
   waveAll: number
   errorInterval: number | undefined = undefined
 
+  enemyInfo: HTMLElement
+  enemyHP: HTMLElement
+  enemySpeed: HTMLElement
+  enemyImportance: HTMLElement
+  enemyReward: HTMLElement
+  enemyImg: HTMLImageElement
+
   constructor(
     public gameData: Level[],
     public level: number,
@@ -34,12 +41,36 @@ class GeneralInfo {
     this.errorDisplay = document.querySelector('.error-info')!
     this.startBtn = document.getElementById('start-round')!
 
+    this.enemyInfo = document.querySelector('.enemy-info')!
+    this.enemyHP = document.querySelector('.enemyHP')!
+    this.enemySpeed = document.querySelector('.enemySpeed')!
+    this.enemyImportance = document.querySelector('.enemyImporance')!
+    this.enemyReward = document.querySelector('.enemyReward')!
+    this.enemyImg = document.querySelector('.enemyImg')!
+
     this.startBtn.addEventListener('click', () => {
       if (!this.startBtn.className.includes('active')) {
         this.startBtn.classList.add('active')
         startRound(this.waveCurrent, this.waveAll)
       }
     })
+  }
+
+  displayEnemyInfo(enemy: Enemy) {
+    if (!this.enemyInfo.className.includes('active')) {
+      this.enemyInfo.classList.add('active')
+    }
+    this.enemyImg.src = enemy.src
+    this.enemyHP.innerText = `${enemy.health} / ${enemy.healthTotal}`
+    this.enemySpeed.innerText = `${enemy.moveSpeed}`
+    this.enemyImportance.innerText = `-${enemy.importance}`
+    this.enemyReward.innerText = `+${enemy.reward}`
+  }
+
+  closeEnemyInfo() {
+    if (this.enemyInfo.className.includes('active')) {
+      this.enemyInfo.classList.remove('active')
+    }
   }
 
   toggleError(text: string, duration: number) {

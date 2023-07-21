@@ -84,10 +84,13 @@ class Game {
     })
 
     this.canvas.addEventListener('click', this.whatIsClicked.bind(this))
+    this.canvas.addEventListener('dragenter', this.dragging.bind(this))
     this.canvas.addEventListener('dragover', this.updateMousePos.bind(this))
     this.canvas.addEventListener('dragleave', this.dropTurret.bind(this))
   }
-
+  dragging() {
+    this.isDragging = true
+  }
   createWave(path: Point[], enemies: any) {
     enemies.enemies.forEach((enemy: any) => {
       const { amount, start, lvl, next, last, wave } = enemy
@@ -98,7 +101,7 @@ class Game {
             if (last) this.waveAboutEnd = true
           }, i * next * 1000)
         }
-      }, start * 1000 + wave * 5000)
+      }, start * 1000 + wave * 7500)
     })
   }
 
@@ -116,14 +119,14 @@ class Game {
     this.towersArr.forEach((tower: Tower) => {
       if (tower.target && tower.target.id === a.id) tower.target = null
     })
-
+    this.generalInfo.closeEnemyInfo()
     this.generalInfo.updateMoney(a.reward, 'add')
   }
 
   enemyInBase(a: Enemy) {
     this.generalInfo.updateHealth(a.importance)
     this.enemiesArr = this.enemiesArr.filter((enemy) => enemy.id !== a.id)
-
+    this.generalInfo.closeEnemyInfo()
     if (this.generalInfo.hearthAmount <= 0) console.log('game lost')
   }
 
@@ -196,8 +199,15 @@ class Game {
       } else if (this.activeTower && this.activeTower.position !== pos) {
         this.canBuild = true
         this.activeTower.position = pos
+      } else {
+        this.canBuild = true
       }
     }
+
+    if (this.canBuild && this.activeTower) {
+      this.activeTower.drawRange()
+    }
+
     // if tower is not above building place
     if (count === this.interactive.interactivePositions.length) {
       this.canBuild = false
@@ -233,6 +243,7 @@ class Game {
   }
 
   whatIsClicked(e: MouseEvent): void {
+    this.generalInfo.closeEnemyInfo()
     const { x, y } = { x: e.offsetX, y: e.offsetY }
     let count = 0
 
@@ -242,6 +253,16 @@ class Game {
         this.activeTower = tower
         this.singleTowerInfo.show(this.activeTower)
       } else count++
+    }
+
+    for (const enemy of this.enemiesArr) {
+      const { position: pos, size } = enemy
+      if (this.isPointInSquare({ x, y }, { x: pos.x, y: pos.y, size })) {
+        enemy.displayed = true
+        this.generalInfo.displayEnemyInfo(enemy)
+        continue
+      }
+      enemy.displayed = false
     }
 
     if (count === this.towersArr.length) {
@@ -316,7 +337,8 @@ class Game {
         fakeDeepCopy(towersData[num]),
         multiAttack,
         this.checkCircleCollision,
-        this.handleMultiAttack.bind(this)
+        this.handleMultiAttack.bind(this),
+        this.singleTowerInfo.updateTotalDmg.bind(this.singleTowerInfo)
       )
     }
 
@@ -420,6 +442,7 @@ class Game {
   }
   drawEnemies() {
     this.enemiesArr.forEach((enemy) => {
+      if (enemy.displayed) this.generalInfo.displayEnemyInfo(enemy)
       enemy.update()
       enemy.draw()
     })
@@ -429,17 +452,20 @@ class Game {
     const { id, position } = a
     const { multiAttack: name, explosionRadius: radius, dmg } = b
 
-    if (name === 'rocket') this.explosion({ position, radius }, dmg)
+    if (name === 'rocket') this.explosion({ position, radius }, dmg, c, id)
     else if (name === 'bubble') this.bubble(position, id, dmg, c)
   }
 
-  explosion(a: PointAndRadius, dmg: number) {
+  explosion(a: PointAndRadius, dmg: number, c: Tower, id: number) {
     this.enemiesArr.forEach((enemy) => {
       if (this.checkCircleCollision(enemy, a)) {
-        enemy.health -= dmg / 2
+        if (enemy.id !== id) enemy.health -= dmg / 42
+        c.dmgDealt += dmg / 4
+        this.singleTowerInfo.updateTotalDmg(c)
       }
     })
   }
+
   bubble(position: Point, id: number, dmg: number, c: Tower) {
     const amount = 5
 
@@ -468,7 +494,8 @@ class Game {
             this.checkCircleCollision,
             c.deleteBullet.bind(c),
             this.handleMultiAttack,
-            dmg + (i + 3) * 2
+            dmg + i * (dmg / 4),
+            this.singleTowerInfo.updateTotalDmg.bind(this.singleTowerInfo)
           )
         )
       }

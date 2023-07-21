@@ -12,6 +12,7 @@ class Tower extends Sprite {
   public sellFor: number
 
   public radians = 0
+  public dmgDealt = 0
 
   public totalDmg: number
   public bonusDmg = 0
@@ -37,7 +38,8 @@ class Tower extends Sprite {
     public data: TowerDetail,
     public multiAttack: string,
     public checkCircleCollision: (a: Enemy, b: Bullet) => Boolean,
-    public handleMultiAttack: (a: Enemy, b: Bullet, c: Tower) => void
+    public handleMultiAttack: (a: Enemy, b: Bullet, c: Tower) => void,
+    public updateTotalDmg: (a: Tower) => void
   ) {
     super(canvas, c, data.src, data.position)
     this.id = ++Tower.count
@@ -101,10 +103,11 @@ class Tower extends Sprite {
             this.checkCircleCollision,
             this.deleteBullet.bind(this),
             this.handleMultiAttack,
-            this.totalDmg
+            this.totalDmg,
+            this.updateTotalDmg
           )
         )
-      }, 1000 - this.totalAs * 100)
+      }, 2000 - this.totalAs * 100)
     }
   }
 

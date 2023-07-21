@@ -9,7 +9,20 @@
   </head>
   <body style="background-color: rgb(64, 64, 64)">
     <main class="game">
-      <canvas></canvas>
+      <div class="canvas-wrapper">
+        <canvas> </canvas>
+        <div class="enemy-info">
+          <img src="./assets/Enemy/enemy22.png" alt="enemy" class="enemyImg" />
+          <div class="wrap">
+            <p>Health: <span class="enemyHP">10000</span></p>
+            <p>move speed: <span class="enemySpeed">2</span></p>
+          </div>
+          <div class="wrap">
+            <p>importance: <span class="enemyImporance">20</span></p>
+            <p>reward: <span class="enemyReward">1000</span></p>
+          </div>
+        </div>
+      </div>
 
       <div class="game-info flex">
         <section class="general-info flex">
@@ -147,10 +160,13 @@
                 src="../assets/Turret/turret1.png"
                 alt="tower"
                 class="general__image"
+                draggable="false"
               />
 
               <div class="general__name-container flex">
-                <h1 class="general__name">speed shooter</h1>
+                <h1 class="general__name">
+                  total dmg dealt: <span class="toatl-dmg">0</span>
+                </h1>
                 <button class="button general__button" id="sellBtn">
                   Sell for 100$
                 </button>

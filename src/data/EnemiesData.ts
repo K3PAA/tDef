@@ -35,7 +35,7 @@ const enemiesData: EnemyData[] = [
   {
     health: 20,
     moveSpeed: 2,
-    reward: 5,
+    reward: 1,
     size: 52,
     importance: 1,
     src: '../../assets/Enemy/enemy4.png',
@@ -49,15 +49,15 @@ const enemiesData: EnemyData[] = [
     src: '../../assets/Enemy/enemy5.png',
   },
   {
-    health: 50,
+    health: 75,
     moveSpeed: 1,
-    reward: 3,
+    reward: 2,
     size: 52,
     importance: 2,
     src: '../../assets/Enemy/enemy6.png',
   },
   {
-    health: 75,
+    health: 100,
     moveSpeed: 1,
     reward: 3,
     size: 68,
@@ -65,7 +65,7 @@ const enemiesData: EnemyData[] = [
     src: '../../assets/Enemy/enemy7.png',
   },
   {
-    health: 100,
+    health: 250,
     moveSpeed: 1.5,
     reward: 4,
     size: 68,
@@ -73,7 +73,7 @@ const enemiesData: EnemyData[] = [
     src: '../../assets/Enemy/enemy8.png',
   },
   {
-    health: 250,
+    health: 400,
     moveSpeed: 1,
     reward: 4,
     size: 68,
@@ -81,7 +81,7 @@ const enemiesData: EnemyData[] = [
     src: '../../assets/Enemy/enemy9.png',
   },
   {
-    health: 550,
+    health: 750,
     moveSpeed: 1,
     reward: 5,
     size: 68,

@@ -6,7 +6,7 @@ class TowerInfo {
   // Single Tower Elements
   image: HTMLImageElement
   sellBtn: Element
-  name: HTMLElement
+  totalDmg: HTMLElement
   closeInfoBtn: HTMLElement
   //  cant give other value than any
   list: any
@@ -31,7 +31,7 @@ class TowerInfo {
     this.turretInfo = document.querySelector('.turret-open')!
 
     this.image = document.querySelector('.general__image')!
-    this.name = document.querySelector('.general__name')!
+    this.totalDmg = document.querySelector('.toatl-dmg')!
     this.sellBtn = document.getElementById('sellBtn')!
     this.closeInfoBtn = document.getElementById('close-turret')!
     this.dmg = document.querySelector('.turret-base-dmg')!
@@ -169,6 +169,10 @@ class TowerInfo {
     this.updateDeletePrice(tower.sellFor)
   }
 
+  updateTotalDmg(tower: Tower) {
+    if (tower.active) this.totalDmg.innerText = `${Math.round(tower.dmgDealt)}`
+  }
+
   show(tower: Tower): void {
     if (!tower) return
 
@@ -180,7 +184,7 @@ class TowerInfo {
     tower.active = true
     if (tower.imgSrc) this.image.src = tower.imgSrc
 
-    this.name.innerText = 'tower'
+    this.updateTotalDmg(tower)
     this.sellBtn.textContent = `Sell for ${tower.sellFor}$`
 
     this.dmg.textContent = `${tower.basicDmg}`
