@@ -5,6 +5,7 @@ class Bullet extends Sprite {
   public velocity: Point = { x: 0, y: 0 }
   public position: Point = { x: 0, y: 0 }
   public radius = 10
+
   public explosionRadius = 70
   public color: string = 'red'
   public radians = 0
@@ -22,9 +23,10 @@ class Bullet extends Sprite {
     public deleteBullet: (a: Bullet) => void,
     public handleMultiAttack: (a: Enemy, b: Bullet, c: Tower) => void,
     public dmg: number,
-    public updateTotalDmg: (a: Tower) => void
+    public updateTotalDmg: (a: Tower) => void,
+    public stage: number
   ) {
-    super(canvas, c, src)
+    super(canvas, c, src, playerPos, { x: 0, y: 0 }, 0, stage, 4)
     this.id = ++Tower.count
     this.position = JSON.parse(JSON.stringify(playerPos))
   }
@@ -40,7 +42,7 @@ class Bullet extends Sprite {
     const x = this.position.x - this.enemy.position.x
     const y = this.position.y - this.enemy.position.y
     const radians = Math.atan2(y, x)
-    this.radians = radians + (-180 * Math.PI) / 180
+    this.radians = radians + (-90 * Math.PI) / 180
     this.velocity.x = Math.cos(radians) * -this.moveSpeed
     this.velocity.y = Math.sin(radians) * -this.moveSpeed
   }
@@ -53,7 +55,9 @@ class Bullet extends Sprite {
         this.handleMultiAttack(this.enemy, this, this.tower)
       }
 
-      this.tower.dmgDealt += this.dmg
+      if (this.enemy.health - this.dmg > 0) this.tower.dmgDealt += this.dmg
+      else this.tower.dmgDealt += this.enemy.health
+
       this.updateTotalDmg(this.tower)
       this.enemy.health -= this.dmg
       this.deleteBullet(this)
@@ -62,6 +66,6 @@ class Bullet extends Sprite {
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
 
-    this.drawOutline()
+    // this.drawOutline()
   }
 }

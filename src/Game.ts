@@ -330,11 +330,16 @@ class Game {
       return { ...JSON.parse(JSON.stringify(x)) }
     }
 
-    const createTower = (num: number, multiAttack: string = 'none'): Tower => {
+    const createTower = (
+      num: number,
+      attackOrder: string,
+      multiAttack: string = 'none'
+    ): Tower => {
       return new Tower(
         this.canvas,
         this.c,
         fakeDeepCopy(towersData[num]),
+        attackOrder,
         multiAttack,
         this.checkCircleCollision,
         this.handleMultiAttack.bind(this),
@@ -345,35 +350,35 @@ class Game {
     let tower: Tower
     switch (name) {
       case 'speed':
-        tower = createTower(0)
+        tower = createTower(0, 'move_speed')
         break
 
       case 'burn':
-        tower = createTower(1)
+        tower = createTower(1, 'move_speed')
         break
 
       case 'freeze':
-        tower = createTower(2)
+        tower = createTower(2, 'highiest_hp')
         break
 
       case 'laser':
-        tower = createTower(3)
+        tower = createTower(3, 'move_speed')
         break
 
       case 'thunder':
-        tower = createTower(4, 'bubble')
+        tower = createTower(4, 'middle', 'bubble')
         break
 
       case 'bubble':
-        tower = createTower(5, 'rocket')
+        tower = createTower(5, 'middle', 'rocket')
         break
 
       case 'rocket':
-        tower = createTower(6)
+        tower = createTower(6, 'first')
         break
 
       case 'metal':
-        tower = createTower(7)
+        tower = createTower(7, 'move_speed')
         break
       default:
         this.createError(`Tower ${name} does not match any tower name`)
@@ -388,6 +393,51 @@ class Game {
     this.c.fillRect(pos.x, pos.y, pos.size, pos.size)
   }
 
+  selectMiddle(centerTowerPos: any, tower: Tower) {
+    let avaliableEnemies: Enemy[] = []
+    for (const enemy of this.enemiesArr) {
+      if (this.checkCircleCollision(centerTowerPos, enemy)) {
+        avaliableEnemies.push(enemy)
+      }
+    }
+
+    tower.target = avaliableEnemies[Math.floor(avaliableEnemies.length / 2)]
+  }
+
+  selectBySpeed(centerTowerPos: any, tower: Tower) {
+    for (const enemy of this.enemiesArr) {
+      if (
+        enemy.moveSpeed > 1 &&
+        this.checkCircleCollision(centerTowerPos, enemy)
+      ) {
+        tower.target = enemy
+        break
+      }
+    }
+  }
+
+  selectFirst(centerTowerPos: any, tower: Tower) {
+    for (const enemy of this.enemiesArr) {
+      if (this.checkCircleCollision(centerTowerPos, enemy)) {
+        tower.target = enemy
+        break
+      }
+    }
+  }
+  selectByHP(centerTowerPos: any, tower: Tower) {
+    const enemiesInRange = []
+    for (const enemy of this.enemiesArr) {
+      if (this.checkCircleCollision(centerTowerPos, enemy)) {
+        enemiesInRange.push(enemy)
+      }
+    }
+
+    const highiesHP = enemiesInRange.sort((a, b) =>
+      a.health >= b.health ? -1 : 1
+    )
+    tower.target = highiesHP[0]
+  }
+
   drawTowers() {
     this.towersArr.forEach((tower) => {
       // Tower have small offset so the shooting calculation had started a little to soon
@@ -398,44 +448,39 @@ class Game {
           y: tower.position.y + tower.offset.y,
         },
       }
-      if (
-        (!tower.target && tower.multiAttack === 'rocket') ||
-        (!tower.target && tower.multiAttack === 'bubble')
-      ) {
-        let avaliableEnemies: Enemy[] = []
-        for (const enemy of this.enemiesArr) {
-          if (this.checkCircleCollision(centerTowerPos, enemy)) {
-            avaliableEnemies.push(enemy)
-          }
-        }
-
-        tower.target = avaliableEnemies[Math.floor(avaliableEnemies.length / 2)]
-      } else if (!tower.target) {
-        for (const enemy of this.enemiesArr) {
-          if (
-            enemy.moveSpeed > 1 &&
-            this.checkCircleCollision(centerTowerPos, enemy)
-          ) {
-            tower.target = enemy
+      if (!tower.target) {
+        switch (tower.attackOrder) {
+          case 'middle':
+            this.selectMiddle(centerTowerPos, tower)
             break
-          }
-        }
-        if (!tower.target) {
-          for (const enemy of this.enemiesArr) {
-            if (this.checkCircleCollision(centerTowerPos, enemy)) {
-              tower.target = enemy
-              break
+
+          case 'highiest_hp':
+            this.selectByHP(centerTowerPos, tower)
+            break
+
+          case 'first':
+            this.selectFirst(centerTowerPos, tower)
+            break
+
+          case 'move_speed':
+            // if no player is faster than 1 then is returns null
+            this.selectBySpeed(centerTowerPos, tower)
+            if (!tower.target) {
+              this.selectFirst(centerTowerPos, tower)
             }
-          }
-        }
-      } else {
-        if (!this.checkCircleCollision(centerTowerPos, tower.target)) {
-          tower.target.color = 'red'
-          tower.target = null
-          clearInterval(tower.isShooting)
-          tower.isShooting = undefined
+            break
         }
       }
+      if (
+        tower.target &&
+        !this.checkCircleCollision(centerTowerPos, tower.target)
+      ) {
+        tower.target.color = 'red'
+        tower.target = null
+        clearInterval(tower.isShooting)
+        tower.isShooting = undefined
+      }
+
       tower.update()
       tower.draw()
     })
@@ -459,8 +504,11 @@ class Game {
   explosion(a: PointAndRadius, dmg: number, c: Tower, id: number) {
     this.enemiesArr.forEach((enemy) => {
       if (this.checkCircleCollision(enemy, a)) {
-        if (enemy.id !== id) enemy.health -= dmg / 42
-        c.dmgDealt += dmg / 4
+        if (enemy.id !== id) {
+          if (enemy.health - dmg / 4 > 0) c.dmgDealt += dmg / 4
+          else c.dmgDealt += enemy.health
+          enemy.health -= dmg / 4
+        }
         this.singleTowerInfo.updateTotalDmg(c)
       }
     })
@@ -478,7 +526,6 @@ class Game {
         enemy.id !== id
       )
     })
-    console.log(enemiesToFollowArray)
 
     enemiesToFollowArray.filter((enemy, i) => {
       if (i < amount) {
@@ -489,13 +536,14 @@ class Game {
             enemy,
             this.canvas,
             this.c,
-            '../assets/Bullets/texting.png',
+            c.bulletSrc,
             'none',
             this.checkCircleCollision,
             c.deleteBullet.bind(c),
             this.handleMultiAttack,
             dmg + i * (dmg / 4),
-            this.singleTowerInfo.updateTotalDmg.bind(this.singleTowerInfo)
+            this.singleTowerInfo.updateTotalDmg.bind(this.singleTowerInfo),
+            c.totalDmgUpgrades
           )
         )
       }

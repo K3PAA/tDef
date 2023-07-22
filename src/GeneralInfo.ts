@@ -61,7 +61,9 @@ class GeneralInfo {
       this.enemyInfo.classList.add('active')
     }
     this.enemyImg.src = enemy.src
-    this.enemyHP.innerText = `${enemy.health} / ${enemy.healthTotal}`
+    this.enemyHP.innerText = `${Math.floor(enemy.health)} / ${
+      enemy.healthTotal
+    }`
     this.enemySpeed.innerText = `${enemy.moveSpeed}`
     this.enemyImportance.innerText = `-${enemy.importance}`
     this.enemyReward.innerText = `+${enemy.reward}`

@@ -72,84 +72,107 @@ const levels: Level[] = [
       },
       {
         enemies: [
-          { lvl: 3, amount: 3, next: 1, start: 0, wave: 0 },
+          { lvl: 6, amount: 4, next: 1, start: 0, wave: 0 },
+          { lvl: 5, amount: 1, next: 1, start: 1.5, wave: 0 },
+
+          { lvl: 6, amount: 4, next: 1, start: 0, wave: 1 },
+          { lvl: 6, amount: 7, next: 1, start: 1.5, wave: 1 },
+
+          { lvl: 3, amount: 5, next: 1, start: 0, wave: 2 },
+          { lvl: 4, amount: 7, next: 1, start: 1.5, wave: 2 },
+
+          { lvl: 7, amount: 2, next: 1, start: 0, wave: 3 },
+          { lvl: 6, amount: 5, next: 0.5, start: 1.5, wave: 3 },
+          { lvl: 7, amount: 1, next: 4, start: 1.75, wave: 3, last: true },
+        ],
+      },
+      {
+        enemies: [
+          { lvl: 6, amount: 3, next: 1, start: 0.25, wave: 0 },
           { lvl: 4, amount: 2, next: 1, start: 1.5, wave: 0 },
+          { lvl: 5, amount: 3, next: 1, start: 0, wave: 0 },
+          { lvl: 6, amount: 5, next: 0.25, start: 1.75, wave: 0 },
 
-          { lvl: 3, amount: 3, next: 1, start: 0, wave: 1 },
-          { lvl: 2, amount: 7, next: 1, start: 1.5, wave: 1 },
+          { lvl: 7, amount: 4, next: 1, start: 0, wave: 1 },
+          { lvl: 6, amount: 7, next: 1, start: 1.5, wave: 1 },
 
-          { lvl: 4, amount: 3, next: 1, start: 0, wave: 2 },
-          { lvl: 3, amount: 5, next: 0.5, start: 1.5, wave: 2 },
+          { lvl: 6, amount: 3, next: 1, start: 0, wave: 2 },
+          { lvl: 6, amount: 5, next: 0.75, start: 1.5, wave: 2 },
           { lvl: 5, amount: 1, next: 4, start: 1.75, wave: 2, last: true },
         ],
       },
       {
         enemies: [
-          { lvl: 3, amount: 3, next: 1, start: 0, wave: 0 },
-          { lvl: 4, amount: 2, next: 1, start: 1.5, wave: 0 },
+          { lvl: 6, amount: 3, next: 1, start: 0, wave: 0 },
+          { lvl: 7, amount: 3, next: 1.25, start: 1.5, wave: 0 },
 
-          { lvl: 3, amount: 3, next: 1, start: 0, wave: 1 },
-          { lvl: 4, amount: 7, next: 1, start: 1.5, wave: 1 },
+          { lvl: 7, amount: 3, next: 1.25, start: 0, wave: 1 },
+          { lvl: 6, amount: 4, next: 1, start: 1.5, wave: 1 },
+          { lvl: 9, amount: 3, next: 1.25, start: 0, wave: 1 },
 
-          { lvl: 4, amount: 3, next: 1, start: 0, wave: 2 },
-          { lvl: 3, amount: 5, next: 0.75, start: 1.5, wave: 2 },
-          { lvl: 5, amount: 1, next: 4, start: 1.75, wave: 2, last: true },
+          { lvl: 8, amount: 4, next: 1, start: 1.5, wave: 2 },
+          { lvl: 6, amount: 3, next: 0.5, start: 0, wave: 2 },
+          { lvl: 7, amount: 4, next: 1.2, start: 1.25, wave: 2 },
+
+          { lvl: 6, amount: 2, next: 1.25, start: 0, wave: 3 },
+          { lvl: 6, amount: 3, next: 1.5, start: 1.5, wave: 3 },
+          { lvl: 9, amount: 1, next: 4, start: 1.75, wave: 3, last: true },
         ],
       },
       {
         enemies: [
-          { lvl: 3, amount: 3, next: 1, start: 0, wave: 0 },
-          { lvl: 4, amount: 3, next: 1.25, start: 1.5, wave: 0 },
-
-          { lvl: 4, amount: 3, next: 1.25, start: 0, wave: 1 },
-          { lvl: 5, amount: 4, next: 1, start: 1.5, wave: 1 },
-
-          { lvl: 4, amount: 2, next: 1.25, start: 0, wave: 2 },
-          { lvl: 6, amount: 3, next: 1.5, start: 1.5, wave: 2 },
-          { lvl: 5, amount: 1, next: 4, start: 1.75, wave: 2, last: true },
-        ],
-      },
-      {
-        enemies: [
-          { lvl: 6, amount: 1, next: 1, start: 0, wave: 0 },
+          { lvl: 8, amount: 1, next: 1, start: 0, wave: 0 },
           { lvl: 6, amount: 2, next: 1, start: 1.5, wave: 0 },
 
-          { lvl: 4, amount: 3, next: 1, start: 0, wave: 1 },
-          { lvl: 3, amount: 7, next: 0.5, start: 1.5, wave: 1 },
+          { lvl: 6, amount: 3, next: 1, start: 0, wave: 1 },
+          { lvl: 7, amount: 7, next: 0.5, start: 1.5, wave: 1 },
 
-          { lvl: 4, amount: 5, next: 1, start: 0, wave: 2 },
-          { lvl: 6, amount: 3, next: 1.5, start: 1.5, wave: 2 },
-          { lvl: 5, amount: 1, next: 4, start: 1.75, wave: 2, last: true },
+          { lvl: 4, amount: 10, next: 0.2, start: 0, wave: 2 },
+          { lvl: 9, amount: 7, next: 0.5, start: 1.5, wave: 2 },
+
+          { lvl: 6, amount: 5, next: 1, start: 0, wave: 3 },
+          { lvl: 6, amount: 3, next: 1.5, start: 1.5, wave: 3 },
+          { lvl: 5, amount: 1, next: 4, start: 1.75, wave: 3, last: true },
         ],
       },
       {
         enemies: [
-          { lvl: 5, amount: 4, next: 1, start: 0, wave: 0 },
-          { lvl: 4, amount: 4, next: 1, start: 1.5, wave: 0 },
+          { lvl: 8, amount: 4, next: 1, start: 0, wave: 0 },
+          { lvl: 9, amount: 4, next: 1, start: 1.5, wave: 0 },
 
-          { lvl: 4, amount: 3, next: 1, start: 0, wave: 1 },
+          { lvl: 7, amount: 3, next: 1, start: 0, wave: 1 },
           { lvl: 5, amount: 5, next: 1, start: 1.5, wave: 1 },
-          { lvl: 3, amount: 10, next: 0.5, start: 0, wave: 1 },
-          { lvl: 2, amount: 15, next: 1.25, start: 1.5, wave: 1 },
+          { lvl: 6, amount: 10, next: 0.5, start: 0, wave: 1 },
+          { lvl: 9, amount: 8, next: 1.25, start: 1.5, wave: 1 },
 
-          { lvl: 8, amount: 3, next: 1, start: 0, wave: 2 },
+          { lvl: 9, amount: 3, next: 1, start: 0, wave: 2 },
           { lvl: 6, amount: 6, next: 1.5, start: 1.5, wave: 2 },
           { lvl: 7, amount: 1, next: 4, start: 1.75, wave: 2, last: true },
         ],
       },
       {
         enemies: [
-          { lvl: 3, amount: 10, next: 0.5, start: 0, wave: 0 },
+          { lvl: 9, amount: 10, next: 0.5, start: 0, wave: 0 },
           { lvl: 6, amount: 10, next: 1, start: 1.5, wave: 0 },
 
-          { lvl: 5, amount: 3, next: 1, start: 0, wave: 1 },
+          { lvl: 9, amount: 12, next: 0.5, start: 0, wave: 1 },
           { lvl: 6, amount: 7, next: 1, start: 1.5, wave: 1 },
-          { lvl: 7, amount: 3, next: 1.25, start: 0, wave: 1 },
+          { lvl: 11, amount: 3, next: 1.25, start: 0, wave: 1 },
           { lvl: 4, amount: 10, next: 1, start: 1.5, wave: 1 },
 
-          { lvl: 7, amount: 6, next: 1, start: 0, wave: 2 },
-          { lvl: 8, amount: 8, next: 1.5, start: 1.5, wave: 2 },
-          { lvl: 8, amount: 1, next: 4, start: 1.75, wave: 2, last: true },
+          { lvl: 11, amount: 2, next: 0.5, start: 0, wave: 2 },
+          { lvl: 6, amount: 7, next: 1, start: 1.5, wave: 2 },
+          { lvl: 7, amount: 3, next: 1.25, start: 0, wave: 2 },
+          { lvl: 8, amount: 10, next: 1, start: 1.5, wave: 2 },
+
+          { lvl: 10, amount: 7, next: 0.75, start: 0, wave: 3 },
+          { lvl: 8, amount: 7, next: 1, start: 1.5, wave: 3 },
+          { lvl: 11, amount: 2, next: 1.25, start: 0, wave: 3 },
+          { lvl: 8, amount: 10, next: 1, start: 1.5, wave: 3 },
+
+          { lvl: 10, amount: 4, next: 1, start: 0, wave: 4 },
+          { lvl: 9, amount: 8, next: 1.5, start: 1.5, wave: 4 },
+          { lvl: 12, amount: 1, next: 4, start: 1.75, wave: 4, last: true },
         ],
       },
     ],

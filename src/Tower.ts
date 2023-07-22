@@ -19,6 +19,8 @@ class Tower extends Sprite {
   public basicDmg = 0
 
   public totalAs: number
+  public totalDmgUpgrades = 0
+  public bulletSrc: string
   public bonusAs = 0
   public basicAs = 0
 
@@ -36,6 +38,7 @@ class Tower extends Sprite {
     public canvas: HTMLCanvasElement,
     public c: CanvasRenderingContext2D,
     public data: TowerDetail,
+    public attackOrder: string,
     public multiAttack: string,
     public checkCircleCollision: (a: Enemy, b: Bullet) => Boolean,
     public handleMultiAttack: (a: Enemy, b: Bullet, c: Tower) => void,
@@ -47,7 +50,7 @@ class Tower extends Sprite {
 
     this.cost = data.cost
     this.sellFor = Math.floor(this.cost * 0.7)
-
+    this.bulletSrc = data.bullet
     this.totalDmg = data.totalDmg
     this.totalAs = data.totalAs
     this.radius = data.totalRange
@@ -65,6 +68,7 @@ class Tower extends Sprite {
   }
   drawBullets() {
     this.bullets.forEach((bullet: Bullet) => {
+      bullet.draw()
       bullet.update()
     })
   }
@@ -98,13 +102,14 @@ class Tower extends Sprite {
             this.target,
             this.canvas,
             this.c,
-            '../assets/Bullets/texting.png',
+            this.bulletSrc,
             this.multiAttack,
             this.checkCircleCollision,
             this.deleteBullet.bind(this),
             this.handleMultiAttack,
             this.totalDmg,
-            this.updateTotalDmg
+            this.updateTotalDmg,
+            this.totalDmgUpgrades
           )
         )
       }, 2000 - this.totalAs * 100)
@@ -146,6 +151,8 @@ class Tower extends Sprite {
   }
 
   updateDmg(bonusDmg: number) {
+    if (this.bonusDmg > 0) this.totalDmgUpgrades++
+
     this.bonusDmg += bonusDmg
     this.totalDmg = this.bonusDmg + this.basicDmg
   }
