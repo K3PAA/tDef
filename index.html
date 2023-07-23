@@ -8,6 +8,27 @@
     <title>Document</title>
   </head>
   <body style="background-color: rgb(64, 64, 64)">
+
+    <section class="menu">
+      <h1 class="manu__title">Tank and Defense</h1>
+      <div class="menu__info">
+        <button class="menu-info__button">Author</button>
+        <button class="menu-info__button">How To Play</button>
+      </div>
+\
+    
+      <div class="menu__levels">
+        <h2 class="level-text"> Click on image to play </h2>
+        <div class="levels grid radius-5">
+          <button class="level__button radius-5" data-lvl="1" ><img src="./assets/Levels/level1/level1.png" alt="level img" draggable="false" class="radius-5"></button>
+          <button class="level__button radius-5" data-lvl="2" disabled><img src="./assets/Levels/level2/level2.png" alt="level img" draggable="false" class="radius-5"></button>
+          <button class="level__button radius-5" data-lvl="3" disabled><img src="./assets/Levels/level3/level3.png" alt="level img" draggable="false" class="radius-5"></button>
+          <button class="level__button radius-5" data-lvl="4" disabled><img src="./assets/Levels/level4/level4.png" alt="level img" draggable="false" class="radius-5"></button>
+        </div>
+      </div>
+    </section>
+
+
     <main class="game">
       <div class="canvas-wrapper">
         <canvas> </canvas>
@@ -37,6 +58,7 @@
           </h3>
         </section>
 
+        <!-- add active or remove -->
         <section class="turrets-display active">
           <h1 class="turrets-display__title">Turrets</h1>
           <div class="turrets-display__container grid">

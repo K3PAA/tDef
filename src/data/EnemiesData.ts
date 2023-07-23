@@ -237,7 +237,7 @@ const enemiesData: EnemyData[] = [
     moveSpeed: 1,
     reward: 12,
     size: 68,
-    importance: 3,
+    importance: 5,
     src: '../../assets/Enemy/enemy29.png',
   },
   {
@@ -245,7 +245,7 @@ const enemiesData: EnemyData[] = [
     moveSpeed: 1.25,
     reward: 12,
     size: 68,
-    importance: 3,
+    importance: 10,
     src: '../../assets/Enemy/enemy30.png',
   },
   {
@@ -253,7 +253,7 @@ const enemiesData: EnemyData[] = [
     moveSpeed: 1.5,
     reward: 13,
     size: 68,
-    importance: 3,
+    importance: 15,
     src: '../../assets/Enemy/enemy31.png',
   },
 ]

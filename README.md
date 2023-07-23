@@ -5,3 +5,4 @@
 ## todos
 
 - Wave managment ( so when user is not on page the waves won't stack one upon each other)
+- add sound effects to game

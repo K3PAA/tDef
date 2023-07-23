@@ -40,7 +40,7 @@ class Game {
 
   waveAboutEnd: Boolean = false
 
-  constructor(public level: number = 0) {
+  constructor(public level: number = 3) {
     this.canvas = document.querySelector('canvas')!
     this.canvas.width = this.dimensions.x * this.tileSize
     this.canvas.height = this.dimensions.y * this.tileSize
@@ -76,11 +76,12 @@ class Game {
     this.background = new Sprite(
       this.canvas,
       this.c,
-      '../assets/Levels/level1/level-1.png'
+      this.gameData[this.level].background
     )
 
     this.towers.forEach((tower, i) => {
       tower.addEventListener('dragstart', this.startDragging.bind(this, tower))
+      tower.addEventListener('dragleave', this.notDragging.bind(this))
     })
 
     this.canvas.addEventListener('click', this.whatIsClicked.bind(this))
@@ -91,6 +92,9 @@ class Game {
 
   dragging() {
     this.isDragging = true
+  }
+  notDragging() {
+    this.isDragging = false
   }
   createWave(path: Point[], enemies: any) {
     enemies.enemies.forEach((enemy: any) => {

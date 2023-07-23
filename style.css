@@ -43,6 +43,7 @@ html:focus-within {
 
 html,
 body {
+  overflow: hidden;
   height: 100%;
 }
 
@@ -81,6 +82,76 @@ svg {
   }
 }
 
+/* MENU */
+.menu.offscreen {
+  transform: translate(-50%, -200%);
+}
+.menu {
+  width: 90%;
+  margin-inline: auto;
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  padding: 20px;
+  transform: translate(-50%, 0);
+  background-color: royalblue;
+  z-index: 100;
+  transition: transform 0.8s ease;
+}
+
+.manu__title,
+.level-text {
+  font-size: 2rem;
+  text-transform: lowercase;
+  letter-spacing: 1.25px;
+  text-align: center;
+  font-family: DungeonFont;
+}
+
+.menu__info {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-info__button {
+  font-family: DungeonFont;
+  font-size: 1.5rem;
+  border: 5px solid rgb(18, 32, 76);
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 4px 8px;
+}
+.level-text {
+  font-size: 1.5rem;
+}
+.levels {
+  grid-template-columns: repeat(4, 1fr);
+}
+.level__button {
+  position: relative;
+  border: 0;
+  cursor: pointer;
+}
+.level__button:disabled {
+  filter: grayscale(1);
+}
+.level__button:hover::before {
+  font-family: DungeonFont;
+  content: 'LvL ' attr(data-lvl);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: antiquewhite;
+  padding: 3px 6px;
+  border: 1px solid black;
+  border-radius: 5px;
+  pointer-events: none;
+}
+/*  */
+
 .canvas-wrapper {
   position: relative;
   height: 580px;
@@ -108,8 +179,12 @@ svg {
 .enemy-info p {
   font-size: 1.25rem;
 }
-.game {
+
+.game.active {
   display: flex;
+}
+.game {
+  display: none;
   top: 50px;
   justify-content: center;
   position: relative;
