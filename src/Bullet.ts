@@ -9,7 +9,6 @@ class Bullet extends Sprite {
   public explosionRadius = 70
   public color: string = 'red'
   public radians = 0
-  public moveSpeed = 10
 
   constructor(
     public tower: Tower,
@@ -24,9 +23,13 @@ class Bullet extends Sprite {
     public handleMultiAttack: (a: Enemy, b: Bullet, c: Tower) => void,
     public dmg: number,
     public updateTotalDmg: (a: Tower) => void,
-    public stage: number
+    public stage: number,
+    public moveSpeed: number = 10
   ) {
-    super(canvas, c, src, playerPos, { x: 0, y: 0 }, 0, stage, 4)
+    super(canvas, c, src, playerPos, { x: -16, y: -16 }, 0, stage, 4)
+    if (this.moveSpeed < 10) {
+      this.offset = { x: 0, y: 0 }
+    }
     this.id = ++Tower.count
     this.position = JSON.parse(JSON.stringify(playerPos))
   }
@@ -56,7 +59,7 @@ class Bullet extends Sprite {
       }
 
       if (this.enemy.health - this.dmg > 0) this.tower.dmgDealt += this.dmg
-      else this.tower.dmgDealt += this.enemy.health
+      else if (this.enemy.health > 0) this.tower.dmgDealt += this.enemy.health
 
       this.updateTotalDmg(this.tower)
       this.enemy.health -= this.dmg

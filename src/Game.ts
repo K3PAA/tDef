@@ -88,6 +88,7 @@ class Game {
     this.canvas.addEventListener('dragover', this.updateMousePos.bind(this))
     this.canvas.addEventListener('dragleave', this.dropTurret.bind(this))
   }
+
   dragging() {
     this.isDragging = true
   }
@@ -374,7 +375,7 @@ class Game {
         break
 
       case 'rocket':
-        tower = createTower(6, 'first')
+        tower = createTower(6, 'move_speed')
         break
 
       case 'metal':
@@ -433,8 +434,9 @@ class Game {
     }
 
     const highiesHP = enemiesInRange.sort((a, b) =>
-      a.health >= b.health ? -1 : 1
+      a.healthTotal > b.healthTotal ? -1 : 1
     )
+
     tower.target = highiesHP[0]
   }
 
@@ -543,7 +545,8 @@ class Game {
             this.handleMultiAttack,
             dmg + i * (dmg / 4),
             this.singleTowerInfo.updateTotalDmg.bind(this.singleTowerInfo),
-            c.totalDmgUpgrades
+            c.totalDmgUpgrades,
+            2
           )
         )
       }

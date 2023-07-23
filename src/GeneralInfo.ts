@@ -19,6 +19,7 @@ class GeneralInfo {
   enemyImportance: HTMLElement
   enemyReward: HTMLElement
   enemyImg: HTMLImageElement
+  turretContianer: NodeListOf<HTMLElement>
 
   constructor(
     public gameData: Level[],
@@ -39,6 +40,7 @@ class GeneralInfo {
     this.waveAll = this.gameData[this.level].waves.length
 
     this.errorDisplay = document.querySelector('.error-info')!
+    this.turretContianer = document.querySelectorAll('.turret-conatiner')
     this.startBtn = document.getElementById('start-round')!
 
     this.enemyInfo = document.querySelector('.enemy-info')!
@@ -48,12 +50,55 @@ class GeneralInfo {
     this.enemyReward = document.querySelector('.enemyReward')!
     this.enemyImg = document.querySelector('.enemyImg')!
 
+    this.turretContianer.forEach((container, i) => {
+      container.addEventListener('mouseenter', () =>
+        this.showTurretInfo(container, i)
+      )
+      container.addEventListener('mouseleave', () =>
+        this.closeTurretInfo(container)
+      )
+    })
+
     this.startBtn.addEventListener('click', () => {
       if (!this.startBtn.className.includes('active')) {
         this.startBtn.classList.add('active')
         startRound(this.waveCurrent, this.waveAll)
       }
     })
+  }
+
+  closeTurretInfo(container: HTMLElement) {
+    const div = container.querySelector('.turret-container-js')
+    if (div) container.removeChild(div)
+  }
+
+  selectOverview(i: number) {
+    if (i === 0) {
+      return `fast attack speed, low dmg`
+    } else if (i === 1) {
+      return `Strong at start, expensive upgrades`
+    } else if (i === 2) {
+      return `High range, mid dmg, slow attack`
+    } else if (i === 3) {
+      return `Laser attack, high dmg`
+    } else if (i === 4) {
+      return `Attack up to 5 enemies (bounced bullets have bonus dmg), mid dmg`
+    } else if (i === 5) {
+      return `Attack group of enemies (enemies around get 1/4 of dmg), mid dmg`
+    } else if (i === 6) {
+      return `Slow Attack, High Dmg`
+    } else if (i === 7) {
+      return `fast attack speed, mid dmg`
+    }
+  }
+  showTurretInfo(container: HTMLElement, i: number) {
+    let overview = this.selectOverview(i)
+    const div = document.createElement('div')
+    div.classList.add('turret-container-js')
+    const p = document.createElement('p')
+    p.textContent = `${overview}`
+    div.appendChild(p)
+    container.appendChild(div)
   }
 
   displayEnemyInfo(enemy: Enemy) {

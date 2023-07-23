@@ -229,7 +229,22 @@ svg {
 .turret-conatiner {
   border: 2px solid black;
   justify-content: space-evenly;
+  position: relative;
 }
+
+.turret-container-js {
+  --_padding: 0.25rem;
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + var(--_padding));
+  left: 0;
+
+  width: 100%;
+  background-color: rgb(194, 255, 179);
+  padding: var(--_padding);
+  border-radius: 5px;
+}
+
 .turret-container__info {
   flex-direction: column;
 }
