@@ -11,17 +11,25 @@ class Game {
 
   // object with important data
   public gameData: Level[] = levels
+  public endOfGame: boolean = false
+
+  public anim: undefined | number = undefined
+  public spawnEnemies: undefined | number = undefined
 
   // Holds data about places that allows user to build turrets on
   public interactive: DataToConvert
 
   // HTML towers
   towers: NodeListOf<HTMLImageElement>
+  levelButtons: NodeListOf<HTMLButtonElement>
   singleTowerInfo: TowerInfo
   generalInfo: GeneralInfo
 
   // Game Background
   background: Sprite
+
+  menu: HTMLElement
+  game: HTMLElement
 
   // detect if player is dragging turret or not
   isDragging: Boolean = false
@@ -35,12 +43,12 @@ class Game {
   // Arrays that will contains enemies and towers when on screen
   towersData: TowerDetail[] = towersData
   enemiesData: EnemyData[] = enemiesData
-  towersArr: Tower[]
-  enemiesArr: Enemy[]
+  towersArr: Tower[] = []
+  enemiesArr: Enemy[] = []
 
   waveAboutEnd: Boolean = false
 
-  constructor(public level: number = 3) {
+  constructor(public level: number = 0) {
     this.canvas = document.querySelector('canvas')!
     this.canvas.width = this.dimensions.x * this.tileSize
     this.canvas.height = this.dimensions.y * this.tileSize
@@ -53,8 +61,9 @@ class Game {
       this.gameData[this.level].interactive
     )
 
-    this.towersArr = []
-    this.enemiesArr = []
+    this.menu = document.querySelector('.menu')!
+    this.game = document.querySelector('.game')!
+    this.levelButtons = document.querySelectorAll('.level__button')
 
     // HTML ELEMENTS
     this.singleTowerInfo = new TowerInfo(
@@ -69,6 +78,7 @@ class Game {
       this.level,
       this.startRound.bind(this)
     )
+
     this.towers = document.querySelectorAll('.turret')!
 
     this.generalInfo.renderBasicHTML()
@@ -90,6 +100,28 @@ class Game {
     this.canvas.addEventListener('dragleave', this.dropTurret.bind(this))
   }
 
+  setUpNewLvl() {
+    this.generalInfo = new GeneralInfo(
+      this.gameData,
+      this.level,
+      this.startRound.bind(this)
+    )
+    this.interactive = new ConvertData(
+      this.dimensions,
+      this.tileSize,
+      this.tileSize * 3,
+      this.gameData[this.level].interactive
+    )
+
+    this.background = new Sprite(
+      this.canvas,
+      this.c,
+      this.gameData[this.level].background
+    )
+
+    this.generalInfo.renderBasicHTML()
+  }
+
   dragging() {
     this.isDragging = true
   }
@@ -97,23 +129,29 @@ class Game {
     this.isDragging = false
   }
   createWave(path: Point[], enemies: any) {
-    enemies.enemies.forEach((enemy: any) => {
-      const { amount, start, lvl, next, last, wave } = enemy
-      setTimeout(() => {
-        for (let i = 0; i < amount; i++) {
-          setTimeout(() => {
-            this.enemiesArr.push(this.selectEnemy(lvl, path))
-            if (last) this.waveAboutEnd = true
-          }, i * next * 1000)
-        }
-      }, start * 1000 + wave * 7500)
-    })
+    if (!this.spawnEnemies) {
+      enemies.enemies.forEach((enemy: any) => {
+        const { amount, start, lvl, next, last, wave } = enemy
+        this.spawnEnemies = setTimeout(() => {
+          for (let i = 0; i < amount; i++) {
+            setTimeout(() => {
+              if (this.spawnEnemies) {
+                this.enemiesArr.push(this.selectEnemy(lvl, path))
+              }
+              if (last && !this.waveAboutEnd) {
+                this.waveAboutEnd = true
+              }
+            }, i * next * 1000)
+          }
+        }, start * 1000 + wave * 7500)
+      })
+    }
   }
 
-  startRound(waveNum: number, allWave: number) {
-    const enemies = this.gameData[this.level].waves[waveNum]
+  startRound() {
+    const enemies =
+      this.gameData[this.level].waves[this.generalInfo.waveCurrent]
     const path = this.gameData[this.level].path
-
     this.createWave(path, enemies)
     this.generalInfo.updateWave(1)
   }
@@ -132,7 +170,7 @@ class Game {
     this.generalInfo.updateHealth(a.importance)
     this.enemiesArr = this.enemiesArr.filter((enemy) => enemy.id !== a.id)
     this.generalInfo.closeEnemyInfo()
-    if (this.generalInfo.hearthAmount <= 0) console.log('game lost')
+    if (this.generalInfo.hearthAmount <= 0) this.endGame()
   }
 
   selectEnemy(lvl: number, path: Point[]): Enemy | never {
@@ -559,21 +597,76 @@ class Game {
 
   setUpNextRound() {
     if (this.generalInfo.waveCurrent === this.generalInfo.waveAll) {
-      console.log(`Victory `)
+      this.gameWon()
     }
+
+    clearTimeout(this.spawnEnemies)
+    this.spawnEnemies = undefined
     this.waveAboutEnd = false
     this.generalInfo.startBtn.classList.remove('active')
   }
 
+  resetTowerArray() {
+    this.towersArr.forEach((tower) => {
+      this.interactive.interactivePositions.push({
+        x: tower.position.x,
+        y: tower.position.y,
+        size: tower.size,
+      })
+    })
+    this.towersArr = []
+  }
+
+  resetGeneral() {
+    this.waveAboutEnd = false
+    this.generalInfo.waveCurrent = 0
+    this.generalInfo.updateWave()
+    this.generalInfo.money = this.gameData[this.level].money
+    this.generalInfo.updateMoney()
+    this.generalInfo.hearthAmount = this.gameData[this.level].health
+    this.generalInfo.updateHealth()
+  }
+
+  resetGame() {
+    this.enemiesArr = []
+    this.resetTowerArray()
+    this.resetGeneral()
+    this.singleTowerInfo.close()
+    this.generalInfo.startBtn.classList.remove('active')
+    this.menu.classList.remove('offscreen')
+    this.game.classList.remove('active')
+  }
+
+  gameWon() {
+    if (this.levelButtons[this.level + 1]) {
+      this.levelButtons[this.level + 1].disabled = false
+    }
+    this.endGame()
+  }
+
+  endGame() {
+    clearTimeout(this.spawnEnemies)
+    this.spawnEnemies = undefined
+    this.endOfGame = true
+  }
+
+  stopGame() {
+    if (!this.anim) return
+
+    window.cancelAnimationFrame(this.anim)
+    this.anim = undefined
+    this.resetGame()
+  }
   animate(): void {
-    requestAnimationFrame(this.animate.bind(this))
     this.background.draw()
     this.drawIfCanBuild()
     this.drawEnemies()
     this.drawTowers()
 
-    if (this.waveAboutEnd) {
-      if (this.enemiesArr.length === 0) this.setUpNextRound()
-    }
+    if (this.waveAboutEnd && this.enemiesArr.length === 0) this.setUpNextRound()
+
+    this.anim = window.requestAnimationFrame(this.animate.bind(this))
+
+    if (this.endOfGame) this.stopGame()
   }
 }

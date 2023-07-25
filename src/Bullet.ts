@@ -26,7 +26,7 @@ class Bullet extends Sprite {
     public stage: number,
     public moveSpeed: number = 10
   ) {
-    super(canvas, c, src, playerPos, { x: -16, y: -16 }, 0, stage, 4)
+    super(canvas, c, src, playerPos, { x: -12, y: 0 }, 0, stage, 4)
     if (this.moveSpeed < 10) {
       this.offset = { x: 0, y: 0 }
     }

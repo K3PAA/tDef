@@ -24,7 +24,7 @@ class GeneralInfo {
   constructor(
     public gameData: Level[],
     public level: number,
-    public startRound: (x: number, y: number) => void
+    public startRound: () => void
   ) {
     // General Game HTML and Values
     this.hearthDisplay = document.getElementById('game-heart')!
@@ -62,7 +62,7 @@ class GeneralInfo {
     this.startBtn.addEventListener('click', () => {
       if (!this.startBtn.className.includes('active')) {
         this.startBtn.classList.add('active')
-        startRound(this.waveCurrent, this.waveAll)
+        startRound()
       }
     })
   }
@@ -118,6 +118,14 @@ class GeneralInfo {
     if (this.enemyInfo.className.includes('active')) {
       this.enemyInfo.classList.remove('active')
     }
+  }
+  showError(text: string, duration: number) {
+    this.errorDisplay.classList.add('active')
+    this.errorDisplay.innerText = text
+
+    this.errorInterval = setTimeout(() => {
+      this.errorDisplay.classList.remove('active')
+    }, duration)
   }
 
   toggleError(text: string, duration: number) {

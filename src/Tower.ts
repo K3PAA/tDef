@@ -77,7 +77,10 @@ class Tower extends Sprite {
       return bullet.id !== a.id
     })
   }
-
+  resetShooting() {
+    clearInterval(this.isShooting)
+    this.isShooting = undefined
+  }
   shootToTarget() {
     if (!this.target) return
     this.target.color = 'yellow'

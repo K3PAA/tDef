@@ -93,8 +93,8 @@ const towersData: TowerDetail[] = [
     upgrades: {
       dmg: [
         { price: 10, bonus: 25, bought: false, active: true },
-        { price: 45, bonus: 75, bought: false, active: false },
-        { price: 320, bonus: 1005, bought: false, active: false },
+        { price: 85, bonus: 125, bought: false, active: false },
+        { price: 320, bonus: 2005, bought: false, active: false },
         { price: 575, bonus: 2750, bought: false, active: false },
       ],
       as: [
@@ -122,21 +122,21 @@ const towersData: TowerDetail[] = [
     upgrades: {
       dmg: [
         { price: 15, bonus: 3, bought: false, active: true },
-        { price: 100, bonus: 45, bought: false, active: false },
-        { price: 335, bonus: 200, bought: false, active: false },
-        { price: 505, bonus: 295, bought: false, active: false },
+        { price: 150, bonus: 45, bought: false, active: false },
+        { price: 285, bonus: 200, bought: false, active: false },
+        { price: 555, bonus: 265, bought: false, active: false },
       ],
       as: [
         { price: 50, bonus: 0.25, bought: false, active: true },
-        { price: 50, bonus: 0.25, bought: false, active: false },
-        { price: 100, bonus: 0.25, bought: false, active: false },
-        { price: 225, bonus: 0.5, bought: false, active: false },
+        { price: 125, bonus: 0.25, bought: false, active: false },
+        { price: 250, bonus: 0.25, bought: false, active: false },
+        { price: 350, bonus: 0.5, bought: false, active: false },
       ],
       range: [
         { price: 10, bonus: 30, bought: false, active: true },
-        { price: 35, bonus: 20, bought: false, active: false },
-        { price: 50, bonus: 30, bought: false, active: false },
-        { price: 70, bonus: 50, bought: false, active: false },
+        { price: 45, bonus: 20, bought: false, active: false },
+        { price: 180, bonus: 30, bought: false, active: false },
+        { price: 220, bonus: 60, bought: false, active: false },
       ],
     },
   },
@@ -150,10 +150,10 @@ const towersData: TowerDetail[] = [
     bullet: '../../assets/Bullets/bubble.png',
     upgrades: {
       dmg: [
-        { price: 35, bonus: 15, bought: false, active: true },
-        { price: 55, bonus: 55, bought: false, active: false },
-        { price: 275, bonus: 325, bought: false, active: false },
-        { price: 415, bonus: 725, bought: false, active: false },
+        { price: 35, bonus: 20, bought: false, active: true },
+        { price: 135, bonus: 75, bought: false, active: false },
+        { price: 325, bonus: 375, bought: false, active: false },
+        { price: 585, bonus: 725, bought: false, active: false },
       ],
       as: [
         { price: 35, bonus: 0.5, bought: false, active: true },
@@ -179,16 +179,16 @@ const towersData: TowerDetail[] = [
     bullet: '../../assets/Bullets/rocket.png',
     upgrades: {
       dmg: [
-        { price: 75, bonus: 25, bought: false, active: true },
-        { price: 125, bonus: 110, bought: false, active: false },
-        { price: 255, bonus: 550, bought: false, active: false },
-        { price: 375, bonus: 950, bought: false, active: false },
+        { price: 75, bonus: 125, bought: false, active: true },
+        { price: 225, bonus: 225, bought: false, active: false },
+        { price: 425, bonus: 650, bought: false, active: false },
+        { price: 675, bonus: 1250, bought: false, active: false },
       ],
       as: [
         { price: 25, bonus: 0.25, bought: false, active: true },
-        { price: 55, bonus: 0.5, bought: false, active: false },
-        { price: 100, bonus: 0.5, bought: false, active: false },
-        { price: 160, bonus: 0.75, bought: false, active: false },
+        { price: 120, bonus: 0.5, bought: false, active: false },
+        { price: 150, bonus: 0.5, bought: false, active: false },
+        { price: 225, bonus: 0.75, bought: false, active: false },
       ],
       range: [
         { price: 15, bonus: 30, bought: false, active: true },
@@ -200,7 +200,7 @@ const towersData: TowerDetail[] = [
   },
   {
     cost: 50,
-    totalDmg: 25,
+    totalDmg: 80,
     totalAs: 8,
     totalRange: 190,
     position: { x: 0, y: 0 },
@@ -208,28 +208,28 @@ const towersData: TowerDetail[] = [
     bullet: '../../assets/Bullets/bullet5.png',
     upgrades: {
       dmg: [
-        { price: 40, bonus: 75, bought: false, active: true },
-        { price: 150, bonus: 275, bought: false, active: false },
+        { price: 40, bonus: 305, bought: false, active: true },
+        { price: 150, bonus: 905, bought: false, active: false },
         { price: 325, bonus: 1800, bought: false, active: false },
-        { price: 525, bonus: 2500, bought: false, active: false },
+        { price: 625, bonus: 4000, bought: false, active: false },
       ],
       as: [
         { price: 60, bonus: 0.75, bought: false, active: true },
-        { price: 90, bonus: 0.75, bought: false, active: false },
+        { price: 140, bonus: 0.75, bought: false, active: false },
         { price: 220, bonus: 1.75, bought: false, active: false },
         { price: 250, bonus: 1.75, bought: false, active: false },
       ],
       range: [
         { price: 35, bonus: 10, bought: false, active: true },
         { price: 45, bonus: 25, bought: false, active: false },
-        { price: 30, bonus: 35, bought: false, active: false },
+        { price: 70, bonus: 35, bought: false, active: false },
         { price: 120, bonus: 60, bought: false, active: false },
       ],
     },
   },
   {
     cost: 50,
-    totalDmg: 10,
+    totalDmg: 35,
     totalAs: 11,
     totalRange: 150,
     position: { x: 0, y: 0 },
@@ -238,9 +238,9 @@ const towersData: TowerDetail[] = [
     upgrades: {
       dmg: [
         { price: 25, bonus: 50, bought: false, active: true },
-        { price: 75, bonus: 175, bought: false, active: false },
-        { price: 325, bonus: 750, bought: false, active: false },
-        { price: 500, bonus: 1250, bought: false, active: false },
+        { price: 175, bonus: 525, bought: false, active: false },
+        { price: 405, bonus: 1550, bought: false, active: false },
+        { price: 605, bonus: 2550, bought: false, active: false },
       ],
       as: [
         { price: 50, bonus: 1.5, bought: false, active: true },

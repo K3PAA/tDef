@@ -1,24 +1,29 @@
 const menu: HTMLElement = document.querySelector('.menu')!
-const game = document.querySelector('.game')!
+const gameContainer: HTMLElement = document.querySelector('.game')!
+
 let levelsUnlocked = 1
+const game = new Game()
 
 const gameButtons: NodeListOf<HTMLButtonElement> =
   document.querySelectorAll('.level__button')!
 
-function startGame(lvl: number) {
-  const game = new Game(lvl)
-  game.background.image.onload = () => {
-    game.animate()
+function createGame(lvl: number) {
+  game.endOfGame = false
+  if (game.level !== lvl) {
+    game.level = lvl
+    game.setUpNewLvl()
   }
+
+  game.anim = window.requestAnimationFrame(game.animate.bind(game))
 }
 function selectLevel(button: HTMLButtonElement) {
   const lvl = Number(button.dataset.lvl)
   if (lvl <= levelsUnlocked) button.disabled = false
 
   menu.classList.add('offscreen')
-  game.classList.add('active')
+  gameContainer.classList.add('active')
 
-  startGame(lvl - 1)
+  createGame(lvl - 1)
 }
 gameButtons.forEach((button) => {
   button.addEventListener('click', () => selectLevel(button))

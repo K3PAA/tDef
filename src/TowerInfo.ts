@@ -162,7 +162,7 @@ class TowerInfo {
     else if (type === 'as') {
       this.bonusAs.textContent = `${tower.bonusAs}`
       //  need to reset tower shooting interval so it have as applied to it
-      tower.isShooting = undefined
+      tower.resetShooting()
     } else if (type === 'range') {
       this.bonusRange.textContent = `${tower.bonusRange}`
     }
