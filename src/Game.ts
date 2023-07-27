@@ -401,7 +401,7 @@ class Game {
         break
 
       case 'freeze':
-        tower = createTower(2, 'highiest_hp')
+        tower = createTower(2, 'move_speed')
         break
 
       case 'laser':
